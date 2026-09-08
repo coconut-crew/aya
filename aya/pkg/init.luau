@@ -1,7 +1,13 @@
+const subcommand_ty = require("@common/subcommand_ty")
 const installation = require("@self/installation")
 const manifest = require("@self/manifest")
 const path = require("@std/path")
+const cli = require("@vendor/cli")
 
-const project_manifest = manifest.read(path.parse("./ayapkg.toml"))
+const pkg: subcommand_ty.Subcommand = {
+	parser = function() end,
 
-installation.install_dependencies(project_manifest)
+	run = function() end,
+}
+
+return pkg

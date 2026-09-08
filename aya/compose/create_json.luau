@@ -1,4 +1,4 @@
-const json = require("@agnostic/utils/json")
+const json = require("@std/json")
 
 export type RojoProject = {
 	name: string,
