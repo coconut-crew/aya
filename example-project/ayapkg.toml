@@ -1,0 +1,6 @@
+name = "example-project"
+
+[dependency.aya-dependency]
+remote = "https://github.com/coconut-crew/aya-dependency.git"
+branch = "main"
+commit = "fd052e79cd80ac58380fcb45e226b100ea1e6b6e"

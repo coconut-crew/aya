@@ -1,0 +1,29 @@
+{
+	"luau-lsp.platform.type": "standard",
+
+	"luau-lsp.ignoreGlobs": ["**/_Index/**", "build/**", "vendor/**"],
+
+	"luau-lsp.completion.imports.useConst": true,
+	"luau-lsp.completion.imports.stringRequires.enabled": true,
+	"luau-lsp.completion.imports.requireStyle": "alwaysAbsolute",
+
+	"luau-lsp.fflags.enableNewSolver": true,
+	"luau-lsp.fflags.enableByDefault": true,
+
+	"luau-lsp.sourcemap.enabled": false,
+
+	"editor.detectIndentation": false,
+	"editor.insertSpaces": false,
+
+	"stylua.targetReleaseVersion": "latest",
+
+	"[luau]": {
+		"editor.defaultFormatter": "JohnnyMorganz.stylua",
+		"editor.formatOnSave": true
+	},
+
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true
+	}
+}

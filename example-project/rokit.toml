@@ -1,0 +1,8 @@
+[tools]
+rojo = "rojo-rbx/rojo@7.7.0"
+lune = "lune-org/lune@0.10.5"
+stylua = "JohnnyMorganz/StyLua@2.5.2"
+lute = "luau-lang/lute@1.0.1-nightly.20260904"
+wally = "upliftgames/wally@0.3.2"
+ninja = "ninja-build/ninja@1.13.2"
+watchexec = "watchexec/watchexec@2.7.2"

@@ -1,0 +1,8 @@
+tabWidth = 5
+useTabs = true
+semi = false
+singleQuote = false
+quoteProps = "consistent"
+trailingComma = "all"
+bracketSpacing = true
+endOfLine = "lf"
