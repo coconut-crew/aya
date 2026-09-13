@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://www.schemastore.org/github-issue-config.json
 blank_issues_enabled: false
 contact_links:
-     - name: feature request
-       url: https://github.com/coconut-crew/aya/discussions/new/choose
-       about: if you want a new api or feature, please open a discussion under one of the appropriate categories
+  - name: feature request
+    url: https://github.com/coconut-crew/aya/discussions/new/choose
+    about: if you want a new api or feature, please open a discussion under one of the appropriate categories

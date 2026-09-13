@@ -4,62 +4,62 @@ type: bug
 labels: "triage"
 assignees: ["nnullcolumn", "ffrostfall"]
 body:
-     - type: markdown
-       attributes:
-            value: |
-                 please check if this bug is [already reported](https://github.com/coconut-crew/aya/issues). if it is, upvote it with a :+1: reaction
+  - type: markdown
+    attributes:
+      value: |
+        please check if this bug is [already reported](https://github.com/coconut-crew/aya/issues). if it is, upvote it with a :+1: reaction
 
-                 if you want a new api or feature, please open a [discussion](https://github.com/coconut-crew/aya/discussions/new/choose) instead.
+        if you want a new api or feature, please open a [discussion](https://github.com/coconut-crew/aya/discussions/new/choose) instead.
 
-                 if you have multiple issues, please open them separately.
-     - type: dropdown
-       id: version
-       attributes:
-            label: "version(s)"
-            description: "please select the version you are experiencing issues with. the version can be found inside the module. if you know this happens for multiple versions, please select multiple. if the version(s) selected are inaccurate, it may take longer to find / fix this issue."
-            multiple: true
-            default: 0
-            options:
-                 - nightly
-                 - n/a (latest available)
-       validations:
-            required: true
-     - type: dropdown
-       id: impacted-tools
-       attributes:
-            label: "tool(s)"
-            description: "which aya tools are you having issues with? you can select multiple."
-            multiple: true
-            options:
-                 - compose
-                 - make
-                 - pkg
-                 - test
-       validations:
-            required: true
-     - type: textarea
-       attributes:
-            label: reproduction
-            description: a clear set of steps to cause the bug to happen. (links, code fences, etc. are appreciated - avoid images.) if your repro is long, it will take more time to triage or fix. please make sure the set of steps is as simple as possible and that someone without other information about your project can cause it to happen locally.
-            placeholder: |
-                 steps:
-                 1. use this ayapkg.toml: file...
-                 2. aya pkg install
-       validations:
-            required: true
-     - type: textarea
-       attributes:
-            label: currvent vs. expected behavior
-            description: |
-                 current behavior vs. what you expected the behavior to be.
+        if you have multiple issues, please open them separately.
+  - type: dropdown
+    id: version
+    attributes:
+      label: "version(s)"
+      description: "please select the version you are experiencing issues with. the version can be found inside the module. if you know this happens for multiple versions, please select multiple. if the version(s) selected are inaccurate, it may take longer to find / fix this issue."
+      multiple: true
+      default: 0
+      options:
+        - nightly
+        - n/a (latest available)
+    validations:
+      required: true
+  - type: dropdown
+    id: impacted-tools
+    attributes:
+      label: "tool(s)"
+      description: "which aya tools are you having issues with? you can select multiple."
+      multiple: true
+      options:
+        - compose
+        - make
+        - pkg
+        - test
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: reproduction
+      description: a clear set of steps to cause the bug to happen. (links, code fences, etc. are appreciated - avoid images.) if your repro is long, it will take more time to triage or fix. please make sure the set of steps is as simple as possible and that someone without other information about your project can cause it to happen locally.
+      placeholder: |
+        steps:
+        1. use this ayapkg.toml: file...
+        2. aya pkg install
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: currvent vs. expected behavior
+      description: |
+        current behavior vs. what you expected the behavior to be.
 
-            placeholder: |
-                 ## current behavior
-                 the package silently fails to install.
-                 ## expected behavior
-                 the package to install or an explicit warning shown as to why it can't
-                 ## regression status
-                 is this behavior a regression? (yes/no)
-                 if so, when did this regress?
-       validations:
-            required: true
+      placeholder: |
+        ## current behavior
+        the package silently fails to install.
+        ## expected behavior
+        the package to install or an explicit warning shown as to why it can't
+        ## regression status
+        is this behavior a regression? (yes/no)
+        if so, when did this regress?
+    validations:
+      required: true

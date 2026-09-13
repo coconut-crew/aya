@@ -1,52 +1,52 @@
 name: analysis
 
 permissions:
-     contents: read
+  contents: read
 
 defaults:
-     run:
-          shell: bash
+  run:
+    shell: bash
 
 on:
-     push:
-          branches:
-               - main
-          paths:
-               - .github/workflows/analysis.yml
-               - .lute/**
-               - aya/**
-               - tests/**
-               - .config.luau
-               - rokit.toml
-     pull_request:
-     workflow_dispatch:
-     merge_group:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/analysis.yml
+      - .lute/**
+      - aya/**
+      - tests/**
+      - .config.luau
+      - rokit.toml
+  pull_request:
+  workflow_dispatch:
+  merge_group:
 
 jobs:
-     test:
-          name: analysis
-          runs-on: ubuntu-latest
-          if: ${{ !contains(github.event.head_commit.message, 'skip ci') }}
-          steps:
-               - name: checkout
-                 uses: actions/checkout@v4
-                 with:
-                      # only checkout files which are being analyzed
-                      sparse-checkout: |
-                           .lute/
-                           aya/
-                           tests/
-                           .config.luau
-                           rokit.toml
-                      sparse-checkout-cone-mode: false
+  test:
+    name: analysis
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, 'skip ci') }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # only checkout files which are being analyzed
+          sparse-checkout: |
+            .lute/
+            aya/
+            tests/
+            .config.luau
+            rokit.toml
+          sparse-checkout-cone-mode: false
 
-               - name: setup-rokit
-                 uses: CompeyDev/setup-rokit@1d9390883f7ebce19d48f5b8d006e11d387c92ab
-               - name: setup lute
-                 run: lute setup
-               - name: analyze tools
-                 run: lute check ./aya
-               - name: analyze tests
-                 run: lute check ./tests
-               - name: analyze lute scripts
-                 run: lute check ./.lute
+      - name: setup-rokit
+        uses: CompeyDev/setup-rokit@1d9390883f7ebce19d48f5b8d006e11d387c92ab
+      - name: setup lute
+        run: lute setup
+      - name: analyze tools
+        run: lute check ./aya
+      - name: analyze tests
+        run: lute check ./tests
+      - name: analyze lute scripts
+        run: lute check ./.lute
