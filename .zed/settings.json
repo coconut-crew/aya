@@ -1,4 +1,10 @@
 {
+	"languages": {
+		"YAML": {
+			"hard_tabs": false,
+			"tab_size": 2
+		}
+	},
 	"lsp": {
 		"luau-lsp": {
 			"settings": {
