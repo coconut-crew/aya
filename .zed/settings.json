@@ -1,0 +1,65 @@
+{
+	"lsp": {
+		"luau-lsp": {
+			"settings": {
+				"roblox": {
+					"enabled": true
+				},
+				// "binary": {
+				// 	"path": "/srv/gh/JohnnyMorganz/luau-lsp/build/luau-lsp"
+				// },
+				"fflags": {
+					"enable_by_default": true,
+					"enable_new_solver": true,
+					"sync": false,
+					"override": {
+						// "LuauConstraintGraph": "true",
+						// "DebugLuauCFG": "true",
+						// "LuauIntegerLibrary": "true",
+						// "LuauIntegerType2": "true",
+						// "LuauUdtfTypeToStringMetamethod": "true",
+						// "LuauTypeFunctionTableIndexerIsReadOnly": "true",
+						// "LuauExportValueSyntax": "true",
+						// "LuauExportValueTypecheck": "true",
+						// "LuauCyclicRequireTypeInference": "false",
+						// "LuauCyclicSccWarningThreshold": "0"
+					}
+				},
+				"definitions": [],
+				"luau-lsp": {
+					"sourcemap": {
+						"enabled": false,
+						"autogenerate": false
+					},
+					"diagnostics": {
+						// "workspace": false
+					},
+					"types": {
+						"definitionFiles": [],
+
+						"disabledGlobals": [
+							"getfenv",
+							"setfenv",
+							"unpack",
+							"loadstring"
+						]
+					},
+					"completion": {
+						"enabled": true,
+						"imports": {
+							"requireStyle": "AlwaysAbsolute",
+							"separateGroupsWithLine": false,
+							"useConst": true,
+							"stringRequires": {
+								"enabled": true
+							},
+							"ignoreGlobs": ["**/_index/**"]
+						},
+						"showDeprecatedItems": true
+						// "enableFragmentAutocomplete": true
+					}
+				}
+			}
+		}
+	}
+}
