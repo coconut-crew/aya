@@ -1,0 +1,52 @@
+title: "[rfc]: enhancement name"
+labels: "triage"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # feature request / enhancement
+
+        welcome! 👋
+
+        if you are interested in proposing a new feature, improvement, or change to signalis, you are in the right place.
+
+        use this template to suggest a new feature, improvement, or change. feel free to open a [pull request](https://github.com/coconut-crew/aya/pulls) after your feature request.
+  - type: textarea
+    id: main
+    attributes:
+      label: body
+      value: |
+        # feature name
+
+        ## summary
+
+        describe the feature, improvement, or change at a high level in one or two paragraphs.
+
+        ## motivation
+
+        this section details why this change matters, as well as explains any prior art / inspiration.
+
+        - who is this for?
+        - what problem does this solve?
+        - what behavior is introduced, or made easier / faster?
+        - what is the expected outcome?
+
+        ### prior art
+
+        inspiration, screenshots, mockups, workflows, or examples from other tools.
+
+        ## design
+
+        explain the design in enough detail for somebody familiar with signalis to understand, and include examples of how the feature is used.
+
+        ## drawbacks
+
+        why should we *not* do this?
+        - ex. <tool> will become slower at <...>
+
+        ## alternatives
+
+        what other designs have been considered? what is the impact of not doing this?
+        - ex. do nothing. without this feature, <...>
+    validations:
+      required: true

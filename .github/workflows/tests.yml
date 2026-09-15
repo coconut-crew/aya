@@ -1,0 +1,62 @@
+name: tests
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/tests.yml
+      - .lute/**
+      - aya/**
+      - tests/**
+      - .config.luau
+  pull_request:
+  workflow_dispatch:
+  merge_group:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os:
+          [
+            { name: windows, version: windows-latest },
+            { name: ubuntu, version: ubuntu-latest },
+            { name: macos, version: macos-latest },
+            { name: macos-arm, version: macos-14 },
+          ]
+    name: tests
+    runs-on: ${{matrix.os.version}}
+    if: ${{ !contains(github.event.head_commit.message, 'skip ci') }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          # only checkout files which are needed for running tests
+          sparse-checkout: |
+            .lute/
+            aya/
+            tests/
+            .config.luau
+            rokit.toml
+          sparse-checkout-cone-mode: false
+
+      - name: setup-rokit
+        uses: CompeyDev/setup-rokit@1d9390883f7ebce19d48f5b8d006e11d387c92ab
+
+      - name: test script
+        run: lute test
+
+      # - name: upload artifact
+      #   if: ${{ always() && github.repository == 'coconut-crew/aya' }}
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #       name: tests-${{ matrix.os.name }}-${{ matrix.os.version }}
+      #       path: .test_artifact/

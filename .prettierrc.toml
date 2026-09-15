@@ -1,4 +1,4 @@
-tabWidth = 5
+tabWidth = 4
 useTabs = true
 semi = false
 singleQuote = false
@@ -6,3 +6,7 @@ quoteProps = "consistent"
 trailingComma = "all"
 bracketSpacing = true
 endOfLine = "lf"
+
+[[overrides]]
+files = "*.yml"
+options.tabWidth = 2

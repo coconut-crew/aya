@@ -1,0 +1,99 @@
+name: release
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  create-github-release:
+    name: create release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ github.ref_name }} --draft --verify-tag --title ${{ github.ref_name }}
+
+  build:
+    needs: ["create-github-release"]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - host: linux
+            os: { name: linux-x86-64, version: ubuntu-24.04 }
+            label: linux-x86_64
+
+          - host: linux
+            os: { name: linux-arm64, version: ubuntu-24.04-arm }
+            label: linux-aarch64
+
+          - host: windows
+            os: { name: windows, version: windows-latest }
+            label: windows-x86_64
+
+          - host: macos
+            os: { name: macos, version: macos-latest }
+            label: macos-x86_64
+
+    name: build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    env:
+      BIN: aya
+      ENTRYPOINT: ./aya/init.luau
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: setup rokit
+        uses: CompeyDev/setup-rokit@1d9390883f7ebce19d48f5b8d006e11d387c92ab
+
+      - name: compile cli
+        run: |
+          mkdir release
+
+          if [ "${{ matrix.host }}" = "windows" ]; then
+            lute compile "$ENTRYPOINT" --output "./release/$BIN.exe"
+          else
+            lute compile "$ENTRYPOINT" --output "./release/$BIN"
+          fi
+
+      - name: generate artifact name
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          echo "ARTIFACT_NAME=$BIN-${TAG_NAME#v}-${{ matrix.label }}.zip" >> "$GITHUB_ENV"
+
+      - name: create archive and upload to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir staging
+
+          if [ "${{ matrix.host }}" = "windows" ]; then
+            cp "release/$BIN.exe" staging/
+            cd staging
+            7z a ../$ARTIFACT_NAME *
+          else
+            cp "release/$BIN" staging/
+            cd staging
+            zip ../$ARTIFACT_NAME *
+          fi
+
+          gh release upload ${{ github.ref_name }} ../$ARTIFACT_NAME
+
+      - name: upload release as action artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.ARTIFACT_NAME }}
