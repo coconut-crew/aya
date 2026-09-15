@@ -8,7 +8,7 @@ body:
 
         welcome! 👋
 
-        if you are interested in proposing a new feature, improvement, or change to signalis, you are in the right place.
+        if you are interested in proposing a new feature, improvement, or change to aya, you are in the right place.
 
         use this template to suggest a new feature, improvement, or change. feel free to open a [pull request](https://github.com/coconut-crew/aya/pulls) after your feature request.
   - type: textarea
@@ -37,7 +37,7 @@ body:
 
         ## design
 
-        explain the design in enough detail for somebody familiar with signalis to understand, and include examples of how the feature is used.
+        explain the design in enough detail for somebody familiar with aya to understand, and include examples of how the feature is used.
 
         ## drawbacks
 
