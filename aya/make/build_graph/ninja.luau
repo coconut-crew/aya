@@ -53,16 +53,10 @@ export type NinjaStatRequiredVersion = {
 	required_version: string,
 }
 
-export type NinjaStat =
-	| NinjaStatBuild
-	| NinjaStatDefaultTarget
-	| NinjaStatDyndepVersion
-	| NinjaStatInclude
-	| NinjaStatRequiredVersion
-	| NinjaStatRule
-	| NinjaStatVariableDecl
+export type NinjaStat = | NinjaStatBuild | NinjaStatDefaultTarget | NinjaStatInclude | NinjaStatRule | NinjaStatVariableDecl
 
-export type NinjaFile = { NinjaStat }
+export type NinjaStaticFile = { version: NinjaStatRequiredVersion?, stmts: { NinjaStat } }
+export type NinjaDyndepFile = { version: NinjaStatDyndepVersion, stmts: { NinjaStat } }
 
 local ninja = {}
 

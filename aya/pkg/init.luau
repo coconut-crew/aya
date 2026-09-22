@@ -5,9 +5,11 @@ const path = require("@std/path")
 const cli = require("@vendor/cli")
 
 const pkg: subcommand_ty.Subcommand = {
-	parser = function() end,
+	parser = function(parser)
+		parser:add("subcommand", "positional", {})
+	end,
 
-	run = function() end,
+	run = function(args) end,
 }
 
 return pkg
