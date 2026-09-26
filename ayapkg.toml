@@ -1,0 +1,7 @@
+name = "aya"
+entry_point = "aya/init.luau"
+
+[dependency.luau_config]
+remote = "https://github.com/coconut-crew/luau-config.git"
+branch = "main"
+commit = "f26e503dedcc8409ed6b37ae5d91c40f49656949"

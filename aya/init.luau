@@ -21,6 +21,8 @@ const function usage()
 	print("\t- compose")
 	print("\t- test")
 	print("\t- install")
+	print(text_styling.header("Options"))
+	print("\t`-v` or `--verbose`: Increase verbosity")
 end
 
 const args = table.clone(process.args)

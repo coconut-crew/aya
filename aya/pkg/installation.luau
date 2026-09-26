@@ -13,7 +13,6 @@ function installation.clone(project_manifest: manifest.Identity, dependency: str
 		"git",
 		"clone",
 		"--depth=1",
-		"--recurse-submodules",
 		`--revision={config.commit}`,
 		config.remote,
 		`packages/_index/{dependency}`,
@@ -41,18 +40,6 @@ function installation.fetch(project_manifest: manifest.Identity, dependency: str
 		`git`,
 		"checkout",
 		pkg_config.commit,
-	}, {
-		stdio = "inherit",
-		cwd = repo_cwd,
-	})
-
-	process.run({
-		"git",
-		"submodule",
-		"update",
-		"--init",
-		"--recursive",
-		"--depth=1",
 	}, {
 		stdio = "inherit",
 		cwd = repo_cwd,

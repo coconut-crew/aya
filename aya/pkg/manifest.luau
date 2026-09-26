@@ -17,7 +17,7 @@ export type Identity = {
 
 const manifest = {}
 
-function manifest.read(location: path.Path)
+function manifest.read(location: path.Pathlike)
 	const file_contents = fs.readFileToString(location)
 	const configuration = toml.deserialize(file_contents)
 
