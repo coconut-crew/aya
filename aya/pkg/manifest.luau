@@ -30,7 +30,7 @@ function manifest.read(location: path.Pathlike)
 end
 
 function manifest.get_pkg_manifest(dependency: string): Identity
-	return manifest.read(path.parse(`packages/_index/{dependency}/ayapkg.toml`))
+	return manifest.read(path.parse(`pkgs/_index/{dependency}/ayapkg.toml`))
 end
 
 function manifest.validate(input: any): Identity
