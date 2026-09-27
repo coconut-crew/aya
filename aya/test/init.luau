@@ -1,4 +1,4 @@
-const subcommand_ty = require("@common/subcommand_ty")
+const subcommand_ty = require("@aya-common/subcommand_ty")
 const cli = require("@vendor/cli")
 
 const test: subcommand_ty.Subcommand = {

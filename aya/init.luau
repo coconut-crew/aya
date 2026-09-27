@@ -1,14 +1,13 @@
-const subcommand_ty = require("@common/subcommand_ty")
-const text_styling = require("@common/text_styling")
+const subcommand_ty = require("@aya-common/subcommand_ty")
+const text_styling = require("@aya-common/text_styling")
 const process = require("@std/process")
 const cli = require("@vendor/cli")
 
 const subcommand_map: { [string]: subcommand_ty.Subcommand } = {
-	compose = require("@compose"),
-	pkg = require("@pkg"),
-	make = require("@make"),
-	test = require("@test"),
-	install = require("@install"),
+	compose = require("@aya-compose"),
+	pkg = require("@aya-pkg"),
+	make = require("@aya-make"),
+	test = require("@aya-test"),
 }
 
 const function usage()
@@ -20,7 +19,7 @@ const function usage()
 	print("\t- make")
 	print("\t- compose")
 	print("\t- test")
-	print("\t- install")
+	print("\t- init")
 	print(text_styling.header("Options"))
 	print("\t`-v` or `--verbose`: Increase verbosity")
 end
