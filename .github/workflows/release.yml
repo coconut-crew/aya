@@ -33,49 +33,27 @@ jobs:
             os: { name: macos, version: macos-latest }
             label: macos-x86_64
 
-    name: build (${{ matrix.target }})
+    name: build
     runs-on: ${{ matrix.os }}
     env:
       BIN: aya
-      ENTRYPOINT: ./aya/init.luau
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: setup rokit
         uses: CompeyDev/setup-rokit@1d9390883f7ebce19d48f5b8d006e11d387c92ab
 
-      - name: compile cli
+      - name: compile
         run: |
-          mkdir release
-
           if [ "${{ matrix.host }}" = "windows" ]; then
-            lute compile "$ENTRYPOINT" --output "./release/$BIN.exe"
+            echo "BINARY=aya_windows-x86_64.zip" >> $GITHUB_ENV
+            lute compile-release-artifact
           else
-            lute compile "$ENTRYPOINT" --output "./release/$BIN"
+            echo "BINARY=aya_${{ matrix.os }}-${{ matrix.arch }}.tar.gz" >> $GITHUB_ENV
+            lute compile-release-artifact
           fi
 
-      - name: generate artifact name
+      - name: upload
         env:
-          TAG_NAME: ${{ github.event.release.tag_name }}
-        run: |
-          echo "ARTIFACT_NAME=$BIN-${TAG_NAME#v}-${{ matrix.label }}.zip" >> "$GITHUB_ENV"
-
-      - name: create archive and upload to release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir staging
-
-          if [ "${{ matrix.host }}" = "windows" ]; then
-            cp "release/$BIN.exe" staging/
-            cd staging
-            7z a ../$ARTIFACT_NAME *
-          else
-            cp "release/$BIN" staging/
-            cd staging
-            zip ../$ARTIFACT_NAME *
-          fi
-
-          gh release upload ${{ github.event.release.tag_name }} ../$ARTIFACT_NAME
+          GITHUB_TOKEN: ${{ secrets.AYA_RELEASE_PAT }}
+        run: gh release upload ${{ github.event.release.tag_name }} $
