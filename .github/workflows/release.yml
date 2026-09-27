@@ -34,9 +34,10 @@ jobs:
             label: macos-x86_64
 
     name: build
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os.version }}
     env:
-      BIN: aya
+      BINARY: aya_${{ matrix.label }}
+      ARCHIVE: aya_${{ matrix.label }}.${{ matrix.host == 'windows' && 'zip' || 'tar.gz' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -44,16 +45,9 @@ jobs:
         uses: CompeyDev/setup-rokit@1d9390883f7ebce19d48f5b8d006e11d387c92ab
 
       - name: compile
-        run: |
-          if [ "${{ matrix.host }}" = "windows" ]; then
-            echo "BINARY=aya_windows-x86_64.zip" >> $GITHUB_ENV
-            lute compile-release-artifact
-          else
-            echo "BINARY=aya_${{ matrix.os }}-${{ matrix.arch }}.tar.gz" >> $GITHUB_ENV
-            lute compile-release-artifact
-          fi
+        run: lute compile-release-artifact
 
       - name: upload
         env:
           GITHUB_TOKEN: ${{ secrets.AYA_RELEASE_PAT }}
-        run: gh release upload ${{ github.event.release.tag_name }} $
+        run: gh release upload "${{ github.event.release.tag_name }}" "release/$ARCHIVE" --clobber
