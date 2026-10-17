@@ -1,5 +1,5 @@
-const installation = require("@pkg/installation")
-const manifest = require("@pkg/manifest")
+const installation = require("@aya-pkg/installation")
+const manifest = require("@aya-pkg/manifest")
 const path = require("@std/path")
 const process = require("@std/process")
 
