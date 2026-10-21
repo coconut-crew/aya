@@ -1,11 +1,11 @@
+const env = require("@std/test/env")
 const fs = require("@std/fs")
+const generate_linker_file = require("./generate_linker_file")
+const glob = require("@common/glob")
+const manifest = require("./manifest")
 const path = require("@std/path")
 const process = require("@std/process")
-const glob = require("@common/glob")
 const text_styling = require("@common/text_styling")
-const env = require("@std/test/env")
-const generate_linker_file = require("./generate_linker_file")
-const manifest = require("./manifest")
 
 const installation = {}
 
@@ -85,19 +85,31 @@ function installation.install_dependencies(ayapkg: path.Path, environment: Envir
 				const ayapkg_manifest_location = path.join(package_folder, dependency.from_path, "ayapkg.toml")
 
 				if fs.exists(ayapkg_manifest_location) == false then
-					print(text_styling.warn(`ayapkg.toml is missing from {path.join(package_folder, dependency.from_path)} which is a dependency of {package_folder}`))
+					print(
+						text_styling.warn(
+							`ayapkg.toml is missing from {path.join(package_folder, dependency.from_path)} which is a dependency of {package_folder}`
+						)
+					)
 					continue
 				end
 
 				const dependency_manifest = manifest.read(ayapkg_manifest_location)
 
 				if dependency_manifest.monorepo then
-					print(text_styling.failure(`cannot depend on {path.join(package_folder, dependency.from_path)}, as it is a monorepo. from {package_folder}`))
+					print(
+						text_styling.failure(
+							`cannot depend on {path.join(package_folder, dependency.from_path)}, as it is a monorepo. from {package_folder}`
+						)
+					)
 					continue
 				end
 
 				if dependency_manifest.entry_point == false then
-					print(text_styling.failure(`cannot depend on {path.join(package_folder, dependency.from_path)}, as there's no entry point. from {package_folder}`))
+					print(
+						text_styling.failure(
+							`cannot depend on {path.join(package_folder, dependency.from_path)}, as there's no entry point. from {package_folder}`
+						)
+					)
 					continue
 				end
 
@@ -118,7 +130,11 @@ function installation.install_dependencies(ayapkg: path.Path, environment: Envir
 				const manifest_path = path.join(package_path, "ayapkg.toml")
 
 				if fs.exists(manifest_path) == false then
-					print(text_styling.failure(`ayapkg.toml is missing from {package_path} which is a dependency of {package_folder}`))
+					print(
+						text_styling.failure(
+							`ayapkg.toml is missing from {package_path} which is a dependency of {package_folder}`
+						)
+					)
 					continue
 				end
 
@@ -129,15 +145,24 @@ function installation.install_dependencies(ayapkg: path.Path, environment: Envir
 					continue
 				end
 
-				if dependency_manifest.entry_point == false then
-					print(text_styling.failure(`cannot depend on {package_path}, as there's no entry point. from {package_folder}`))
+				if manifest_file.entry_point == false then
+					print(
+						text_styling.failure(
+							`cannot depend on {package_path}, as there's no entry point. from {package_folder}`
+						)
+					)
 					continue
 				end
 
-				-- link the package
-				if fs.exists(path.join(environment.root, "pkgs", "_index", id)) then
-					generate_linker_file(package_entry_point, path.join(package_folder, "links", id), require_path)
-				end
+				const package_entry_point = path.join(package_path, manifest_file.entry_point)
+				require_path = package_entry_point
+			end
+
+			-- link the package
+			if require_path then
+				generate_linker_file(require_path, path.join(package_folder, "pkgs", "links", dep_name))
+			else
+				print(text_styling.warn(`missing require path for {dep_name} from {package_folder}`))
 			end
 		end
 	end
