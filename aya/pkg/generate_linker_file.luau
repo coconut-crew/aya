@@ -103,8 +103,17 @@ const function generate_linker_file(package_entry_point: path.Path, link_file_pa
 		end
 	)
 
+	const source_path = path.dirname(path.normalize(link_file_path))
+	local entry_point = path.normalize(package_entry_point)
+
+	if path.basename(entry_point) == "init.luau" then
+		entry_point = path.dirname(entry_point)
+	end
+
+	const relative = string.gsub(tostring(path.relative(source_path, entry_point)), "\\", "/")
+
 	const file_contents: { string } = {
-		`const REQUIRED_MODULE = require("{path.relative(path.normalize(link_file_path), path.normalize(package_entry_point))}")\n`,
+		`const REQUIRED_MODULE = require("{relative}")\n`,
 	}
 
 	for _, node: types.CstType in exported.nodes :: { types.CstNode } do

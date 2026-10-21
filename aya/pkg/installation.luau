@@ -10,7 +10,7 @@ const text_styling = require("@common/text_styling")
 const installation = {}
 
 function installation.clone(project_manifest: manifest.Identity, dependency: string, output: string)
-	assert(project_manifest.monorepo == false)
+	assert(project_manifest.monorepo ~= true)
 	const config = project_manifest.dependency[dependency]
 	assert(config.branch)
 	assert(config.remote)
@@ -59,11 +59,56 @@ export type Environment = {
 	read installed: { [path.Path]: true },
 }
 
+const function get_manifest_file(origin_path: path.Pathlike, from_path: path.Pathlike?, dependency_of: path.Pathlike): manifest.Identity | false
+	const package_path = if from_path then path.join(origin_path, from_path) else origin_path
+	const ayapkg_manifest_location = path.join(package_path, "ayapkg.toml")
+
+	if fs.exists(ayapkg_manifest_location) == false then
+		print(text_styling.warn(`ayapkg.toml is missing from {package_path} which is a dependency of {dependency_of}`))
+		return false
+	end
+
+	const dependency_manifest = manifest.read(ayapkg_manifest_location)
+
+	return dependency_manifest
+end
+
+const function get_require_path(origin_path: path.Pathlike, from_path: path.Pathlike?, dependency_of: path.Pathlike): path.Pathlike | false?
+	const package_path = if from_path then path.join(origin_path, from_path) else origin_path
+	const dependency_manifest = get_manifest_file(origin_path, from_path, dependency_of)
+
+	if dependency_manifest == false then
+		return false
+	end
+
+	if dependency_manifest.monorepo then
+		print(text_styling.failure(`cannot depend on {package_path}, as it is a monorepo. from {dependency_of}`))
+		return false
+	end
+
+	if dependency_manifest.entry_point == false then
+		print(text_styling.failure(`cannot depend on {package_path}, as there's no entry point. from {dependency_of}`))
+		return false
+	end
+
+	return path.join(package_path, dependency_manifest.entry_point)
+end
+
 function installation.install_dependencies(ayapkg: path.Path, environment: Environment)
 	const package_folder = path.dirname(ayapkg)
 	const ayamanifest = manifest.read(ayapkg)
 
-	if ayamanifest.monorepo then
+	if fs.exists(path.join(package_folder, "pkgs")) == false then
+		fs.createDirectory(path.join(package_folder, "pkgs"))
+	end
+	if fs.exists(path.join(package_folder, "pkgs", "links")) == false then
+		fs.createDirectory(path.join(package_folder, "pkgs", "links"), { makeParents = true })
+	else
+		fs.removeDirectory(path.join(package_folder, "pkgs", "links"), { recursive = true })
+		fs.createDirectory(path.join(package_folder, "pkgs", "links"), { makeParents = true })
+	end
+
+	if ayamanifest.monorepo == true then
 		const matching_packages_list = glob.discover(path.join(package_folder, ayamanifest.packages))
 
 		for _, pkg in matching_packages_list do
@@ -76,91 +121,40 @@ function installation.install_dependencies(ayapkg: path.Path, environment: Envir
 
 			installation.install_dependencies(ayapkg_manifest, environment)
 		end
-	elseif ayamanifest.monorepo == false then
+	elseif ayamanifest.monorepo ~= true then
 		for dep_name, dependency in ayamanifest.dependency do
 			local require_path
 
 			-- relative dependency
 			if dependency.remote == nil and dependency.branch == nil and dependency.commit == nil then
-				const ayapkg_manifest_location = path.join(package_folder, dependency.from_path, "ayapkg.toml")
+				const package_path = path.join(package_folder, dependency.from_path)
+				const ayapkg_manifest_location = path.join(package_path, "ayapkg.toml")
 
-				if fs.exists(ayapkg_manifest_location) == false then
-					print(
-						text_styling.warn(
-							`ayapkg.toml is missing from {path.join(package_folder, dependency.from_path)} which is a dependency of {package_folder}`
-						)
-					)
-					continue
-				end
-
-				const dependency_manifest = manifest.read(ayapkg_manifest_location)
-
-				if dependency_manifest.monorepo then
-					print(
-						text_styling.failure(
-							`cannot depend on {path.join(package_folder, dependency.from_path)}, as it is a monorepo. from {package_folder}`
-						)
-					)
-					continue
-				end
-
-				if dependency_manifest.entry_point == false then
-					print(
-						text_styling.failure(
-							`cannot depend on {path.join(package_folder, dependency.from_path)}, as there's no entry point. from {package_folder}`
-						)
-					)
-					continue
-				end
-
-				require_path = path.join(package_folder, dependency.from_path, dependency_manifest.entry_point)
+				installation.install_dependencies(ayapkg_manifest_location, environment)
+				require_path = get_require_path(package_folder, dependency.from_path, package_folder)
 			-- git dependency
 			elseif dependency.remote and dependency.branch and dependency.commit then
 				-- check if the package exists
-				const id = `git#{dependency.remote}+{dependency.branch}+{dependency.commit}`
+				const id = `git#{dependency.commit}`
 				const git_path = path.resolve(environment.root, "pkgs", "_index", id)
+				print(environment.root)
 
-				if fs.exists(path.join(environment.root, "pkgs", "_index", id)) == false then
+				if fs.exists(git_path) == false then
 					installation.clone(ayamanifest, dep_name, tostring(git_path))
 				else
 					installation.fetch(ayamanifest, dep_name, tostring(git_path))
 				end
 
 				const package_path = if dependency.from_path then path.join(git_path, dependency.from_path) else git_path
-				const manifest_path = path.join(package_path, "ayapkg.toml")
+				const ayapkg_manifest_location = path.join(package_path, "ayapkg.toml")
 
-				if fs.exists(manifest_path) == false then
-					print(
-						text_styling.failure(
-							`ayapkg.toml is missing from {package_path} which is a dependency of {package_folder}`
-						)
-					)
-					continue
-				end
-
-				const manifest_file = manifest.read(manifest_path)
-
-				if manifest_file.monorepo then
-					print(text_styling.failure(`cannot depend on {package_path}, as it is a monorepo. from {package_folder}`))
-					continue
-				end
-
-				if manifest_file.entry_point == false then
-					print(
-						text_styling.failure(
-							`cannot depend on {package_path}, as there's no entry point. from {package_folder}`
-						)
-					)
-					continue
-				end
-
-				const package_entry_point = path.join(package_path, manifest_file.entry_point)
-				require_path = package_entry_point
+				installation.install_dependencies(ayapkg_manifest_location, environment)
+				require_path = get_require_path(git_path, dependency.from_path, package_folder)
 			end
 
 			-- link the package
 			if require_path then
-				generate_linker_file(require_path, path.join(package_folder, "pkgs", "links", dep_name))
+				generate_linker_file(path.normalize(require_path), path.join(package_folder, "pkgs", "links", `{dep_name}.luau`))
 			else
 				print(text_styling.warn(`missing require path for {dep_name} from {package_folder}`))
 			end
