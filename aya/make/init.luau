@@ -1,5 +1,5 @@
-const anchors = require("@common/anchors")
-const subcommand_ty = require("@common/subcommand_ty")
+const anchors = require("@aya-common/anchors")
+const subcommand_ty = require("@aya-common/subcommand_ty")
 const path = require("@std/path")
 const cli = require("@vendor/cli")
 

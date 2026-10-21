@@ -1,4 +1,4 @@
-const subcommand_ty = require("@common/subcommand_ty")
+const subcommand_ty = require("@aya-common/subcommand_ty")
 const installation = require("@self/installation")
 const manifest = require("@self/manifest")
 const path = require("@std/path")
