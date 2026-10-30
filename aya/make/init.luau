@@ -30,6 +30,7 @@ const make: subcommand_ty.Subcommand = {
 			anchors.set(entry_path)
 		elseif build_kind == "build" then
 			anchors.set(entry_path)
+		elseif build_kind == "scan" then
 		else
 			print(`build kind must be either build or configure`)
 		end

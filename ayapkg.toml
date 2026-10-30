@@ -5,3 +5,8 @@ entry_point = "aya/init.luau"
 remote = "https://github.com/coconut-crew/luau-config.git"
 branch = "main"
 commit = "068659b4eeb649301d7c38cf6a59ef4335bb2f72"
+
+[dependency.luninjau]
+remote = "https://github.com/coconut-crew/luninjau"
+branch = "main"
+commit = "cdd25743a1a8fbc578e71c1563038de21781a396"

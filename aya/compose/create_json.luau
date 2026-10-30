@@ -1,4 +1,4 @@
-const json = require("@std/json")
+const json = require("@vendor/json")
 
 export type RojoProject = {
 	name: string,
