@@ -2,13 +2,13 @@ const fs = require("@std/fs")
 const path = require("@std/path")
 const process = require("@std/process")
 
-const installation = {}
+const homedir_installation = {}
 
-function installation.register_dir(name: string): path.Path
+function homedir_installation.register_dir(name: string): path.Path
 	return path.join(process.homedir(), ".aya", name)
 end
 
-function installation.run_setup()
+function homedir_installation.run_setup()
 	const home_dir = process.homedir()
 	const aya_user_folder = path.join(home_dir, ".aya")
 
@@ -19,4 +19,4 @@ function installation.run_setup()
 	end
 end
 
-return installation
+return homedir_installation

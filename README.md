@@ -1,4 +1,18 @@
-# aya
+# aya package design
+
+## Workspace
+
+- the thing u actually work in
+
+## Package
+
+## Target
+
+## PlaceFile
+
+## Artifact
+
+# stuff
 
 A tooling suite designed to make developing Roblox games fast, safe, secure, and modular.
 

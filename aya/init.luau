@@ -1,13 +1,11 @@
+const cli = require("@vendor/cli")
+const process = require("@std/process")
 const subcommand_ty = require("@aya-common/subcommand_ty")
 const text_styling = require("@aya-common/text_styling")
-const process = require("@std/process")
-const cli = require("@vendor/cli")
 
 const subcommand_map: { [string]: subcommand_ty.Subcommand } = {
-	compose = require("@aya-compose"),
 	pkg = require("@aya-pkg"),
 	make = require("@aya-make"),
-	test = require("@aya-test"),
 }
 
 const function usage()
