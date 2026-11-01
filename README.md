@@ -1,16 +1,40 @@
 # aya package design
 
+## build.luau
+
+equivalent of build.rs
+
 ## Workspace
 
-- the thing u actually work in
+- the thing u actually work in / edit code in, this is where build directory lives, cache lives, etc. its the git repo
 
 ## Package
 
+- this may be like. server, shared, it has lots of build time config and its where u specify dependencies
+- packages can be: static (shared, utils, etc.), interface (packages), artifacts (server, client, client_first).
+- u can have multiple packages defined in one project.
+
 ## Target
+
+- buildable object
 
 ## PlaceFile
 
-## Artifact
+- roblox place file output, it is built from multiple artifacts
+
+# project hierarchy
+
+```
+src/
+	|- server/          # each server, client, shared is a package.
+		|-.aya.luau
+	|- client/
+		|-.aya.luau
+	|- shared/
+		|-.aya.luau
+		|-util.luau
+		|-random_subfolder/
+```
 
 # stuff
 
