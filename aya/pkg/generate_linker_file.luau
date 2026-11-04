@@ -1,7 +1,7 @@
 const fs = require("@std/fs")
 const path = require("@std/path")
-const syntax = require("@std/syntax")
 const query = require("@std/syntax/query")
+const syntax = require("@std/syntax")
 const types = require("@std/syntax/types")
 
 const function render_generic_array(
@@ -91,7 +91,7 @@ const function render_type_function(file_contents: { string }, node: types.CstSt
 	table.insert(file_contents, ">\n")
 end
 
-const function generate_linker_file(package_entry_point: path.Path, link_file_path: path.Path, require_path: string)
+const function generate_linker_file(package_entry_point: path.Path, link_file_path: path.Path)
 	const exported = query.findAllFromRoot(
 		syntax.parse(fs.readFileToString(package_entry_point)),
 		function(node: types.CstNode): types.CstNode?
@@ -103,8 +103,17 @@ const function generate_linker_file(package_entry_point: path.Path, link_file_pa
 		end
 	)
 
+	const source_path = path.dirname(path.normalize(link_file_path))
+	local entry_point = path.normalize(package_entry_point)
+
+	if path.basename(entry_point) == "init.luau" then
+		entry_point = path.dirname(entry_point)
+	end
+
+	const relative = string.gsub(tostring(path.relative(source_path, entry_point)), "\\", "/")
+
 	const file_contents: { string } = {
-		`const REQUIRED_MODULE = require("{require_path}")\n`,
+		`const REQUIRED_MODULE = require("{relative}")\n`,
 	}
 
 	for _, node: types.CstType in exported.nodes :: { types.CstNode } do

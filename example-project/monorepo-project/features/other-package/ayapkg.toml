@@ -1,0 +1,5 @@
+name = "path-project"
+entry_point = "meow.luau"
+
+[dependency.cool]
+from_path = "../cool-package"

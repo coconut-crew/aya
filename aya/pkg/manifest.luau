@@ -2,17 +2,34 @@ const fs = require("@std/fs")
 const path = require("@std/path")
 const toml = require("@vendor/toml")
 
-export type Dependency = {
-	remote: string,
-	branch: string,
-	commit: string,
-}
+export type GitDependency =
+	{
+		remote: string,
+		branch: string,
+		commit: string,
+		from_path: string?,
+	}
+export type PathDependency = {
+		from_path: string,
+		remote: nil,
+		branch: nil,
+		commit: nil,
+	}
+
+export type Dependency = GitDependency | PathDependency
 
 export type Identity = {
 	name: string,
+	monorepo: false?,
 	entry_point: string | false,
 
 	dependency: { [string]: Dependency },
+} | {
+	name: string,
+	monorepo: true,
+
+	-- location of all the packages
+	packages: string
 }
 
 const manifest = {}
@@ -37,9 +54,17 @@ function manifest.validate(input: any): Identity
 	assert(type(input) == "table", "input must be a table")
 
 	for _, value in input.dependency do
-		assert(type(value.commit) == "string", "commit")
-		assert(type(value.remote) == "string", "remote")
-		assert(type(value.branch) == "string", "branch")
+		if value.from_path then
+			assert(type(value.from_path) == "string", "from_path")
+			assert(type(value.commit) == "nil", "commit")
+			assert(type(value.remote) == "nil", "remote")
+			assert(type(value.branch) == "nil", "branch")
+		else
+			assert(type(value.commit) == "string", "commit")
+			assert(type(value.remote) == "string", "remote")
+			assert(type(value.branch) == "string", "branch")
+			assert(type(value.from_path) == "nil", "from_path")
+		end
 	end
 
 	return input
