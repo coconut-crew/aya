@@ -1,3 +1,0 @@
-name = "path-project"
-monorepo = true
-packages = "./features/*"

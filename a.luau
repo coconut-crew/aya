@@ -1,5 +1,0 @@
-const path = require("@std/path")
-const process = require("@std/process")
-const win32 = require("@std/path/win32")
-local loc = process.cwd()
-loc = path.parse(loc)
