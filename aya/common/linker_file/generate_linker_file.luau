@@ -91,20 +91,17 @@ const function render_type_function(file_contents: { string }, node: types.CstSt
 	table.insert(file_contents, ">\n")
 end
 
-const function generate_linker_file(package_entry_point: path.Path, link_file_path: path.Path)
-	const exported = query.findAllFromRoot(
-		syntax.parse(fs.readFileToString(package_entry_point)),
-		function(node: types.CstNode): types.CstNode?
-			if node.kind == "stat" and ((node.tag == "typealias" or node.tag == "typefunction") and node.isExported) then
-				return node
-			end
-
-			return nil
+const function generate_linker_file(src: path.Path, dst: path.Path)
+	const exported = query.findAllFromRoot(syntax.parse(fs.readFileToString(src)), function(node: types.CstNode): types.CstNode?
+		if node.kind == "stat" and ((node.tag == "typealias" or node.tag == "typefunction") and node.isExported) then
+			return node
 		end
-	)
 
-	const source_path = path.dirname(path.normalize(link_file_path))
-	local entry_point = path.normalize(package_entry_point)
+		return nil
+	end)
+
+	const source_path = path.dirname(path.normalize(dst))
+	local entry_point = path.normalize(src)
 
 	if path.basename(entry_point) == "init.luau" then
 		entry_point = path.dirname(entry_point)
@@ -126,7 +123,7 @@ const function generate_linker_file(package_entry_point: path.Path, link_file_pa
 
 	table.insert(file_contents, "return REQUIRED_MODULE")
 
-	fs.writeStringToFile(link_file_path, table.concat(file_contents))
+	fs.writeStringToFile(dst, table.concat(file_contents))
 end
 
 return generate_linker_file

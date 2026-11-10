@@ -2,39 +2,41 @@ const fs = require("@std/fs")
 const path = require("@std/path")
 const toml = require("@vendor/toml")
 
-export type GitDependency =
-	{
-		remote: string,
-		branch: string,
-		commit: string,
-		from_path: string?,
-	}
+export type GitDependency = {
+	remote: string,
+	branch: string,
+	commit: string,
+	from_path: string?,
+}
 export type PathDependency = {
-		from_path: string,
-		remote: nil,
-		branch: nil,
-		commit: nil,
-	}
+	from_path: string,
+	remote: nil,
+	branch: nil,
+	commit: nil,
+}
 
 export type Dependency = GitDependency | PathDependency
 
-export type Identity = {
-	name: string,
-	monorepo: false?,
-	entry_point: string | false,
+export type Identity =
+	{
+		name: string,
+		monorepo: false?,
+		entry_point: string | false,
 
-	dependency: { [string]: Dependency },
-} | {
-	name: string,
-	monorepo: true,
+		dependency: { [string]: Dependency },
+	}
+	| {
+		name: string,
+		monorepo: true,
 
-	-- location of all the packages
-	packages: string
-}
+		-- location of all the packages
+		packages: string,
+	}
 
 const manifest = {}
 
 function manifest.read(location: path.Pathlike)
+	print(location)
 	const file_contents = fs.readFileToString(location)
 	const configuration = toml.deserialize(file_contents)
 

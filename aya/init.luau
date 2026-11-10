@@ -1,39 +1,53 @@
-const cli = require("@vendor/cli")
+const cli_parser = require("@pkgs/cli_parser")
+const pretty_print = require("@aya/common/utils/pretty_print")
 const process = require("@std/process")
-const subcommand_ty = require("@aya-common/subcommand_ty")
-const text_styling = require("@aya-common/text_styling")
 
-const subcommand_map: { [string]: subcommand_ty.Subcommand } = {
-	pkg = require("@aya-pkg"),
-	make = require("@aya-make"),
-}
+const cmd, tpath, positional = cli_parser.command, cli_parser.tpath, cli_parser.positional
 
-const function usage()
-	print(text_styling.header("Usage"))
-	print(text_styling.info("aya [subcommand]"))
-	print("")
-	print(text_styling.header("Subcommands"))
-	print("\t- pkg")
-	print("\t- make")
-	print("\t- compose")
-	print("\t- test")
-	print("\t- init")
-	print(text_styling.header("Options"))
-	print("\t`-v` or `--verbose`: Increase verbosity")
-end
+const entry = cmd("root", function(cli)
+	cmd("pkg", function(cli)
+		cmd("install", function(cli) end).subcommandof(cli)
+	end).subcommandof(cli)
+
+	cmd("make", function(cli)
+		cmd("configure", function(cli)
+			tpath(cli.location)
+			positional(cli, cli.location)
+		end).subcommandof(cli)
+
+		cmd("build", function(cli)
+			tpath(cli.location)
+			positional(cli, cli.location)
+		end).subcommandof(cli)
+	end).subcommandof(cli)
+
+	cmd("btask", function(cli)
+		cmd("build", function(cli)
+			tpath(cli.src)
+			tpath(cli.dst)
+		end).subcommandof(cli)
+
+		cmd("regen", function(cli)
+			tpath(cli.src)
+		end).subcommandof(cli)
+
+		cmd("discover_deps", function(cli)
+			tpath(cli.src)
+		end).subcommandof(cli)
+
+		cmd("create_crate_links", function(cli)
+			tpath(cli.crate)
+		end).subcommandof(cli)
+	end).subcommandof(cli)
+
+	cmd("test", function(cli) end).subcommandof(cli)
+
+	cli_parser.tails(cli, cli.xtask)
+end)
 
 const args = table.clone(process.args)
+table.remove(args, 1)
 
-const arg_program = table.remove(args, 1)
-assert(arg_program, "const")
+const parsed = cli_parser.parse(entry, args)
 
-const arg_subcommand_picked = table.remove(args, 1)
-assert(arg_subcommand_picked, "subcommand always exists")
-
-const subcommand_picked = subcommand_map[arg_subcommand_picked]
-if not subcommand_picked then
-	usage()
-	return
-end
-
-subcommand_picked.run(args)
+pretty_print(parsed)

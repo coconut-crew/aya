@@ -1,5 +1,6 @@
 name = "aya"
 entry_point = "aya/init.luau"
+monorepo = false
 
 [dependency.luau_config]
 remote = "https://github.com/coconut-crew/luau-config.git"
@@ -10,3 +11,13 @@ commit = "068659b4eeb649301d7c38cf6a59ef4335bb2f72"
 remote = "https://github.com/coconut-crew/luninjau"
 branch = "main"
 commit = "cdd25743a1a8fbc578e71c1563038de21781a396"
+
+[dependency.cli_parser]
+remote = "https://github.com/coconut-crew/cli-parser.git"
+branch = "main"
+commit = "cd0e874aa77f22aa2c62e9d78a896fff106b1523"
+
+[dependency.log]
+remote = "https://github.com/coconut-crew/log.git"
+branch = "main"
+commit = "1b08037c2179ce349f428d8f5a477da354d8818d"

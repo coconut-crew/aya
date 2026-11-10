@@ -1,11 +1,11 @@
 const env = require("@std/test/env")
 const fs = require("@std/fs")
 const generate_linker_file = require("./generate_linker_file")
-const glob = require("@common/glob")
+const glob = require("@aya-common/glob")
 const manifest = require("./manifest")
 const path = require("@std/path")
 const process = require("@std/process")
-const text_styling = require("@common/text_styling")
+const text_styling = require("@aya-common/text_styling")
 
 const installation = {}
 
@@ -53,13 +53,16 @@ function installation.fetch(project_manifest: manifest.Identity, dependency: str
 end
 
 export type Environment = {
-	-- the root path where we will store all packages
-	read root: path.Path,
-	-- a list of dependencies which are already installed
-	read installed: { [path.Path]: true },
+	root: path.Path,
+
+	installed: { [path.Path]: true },
 }
 
-const function get_manifest_file(origin_path: path.Pathlike, from_path: path.Pathlike?, dependency_of: path.Pathlike): manifest.Identity | false
+const function get_manifest_file(
+	origin_path: path.Pathlike,
+	from_path: path.Pathlike?,
+	dependency_of: path.Pathlike
+): manifest.Identity | false
 	const package_path = if from_path then path.join(origin_path, from_path) else origin_path
 	const ayapkg_manifest_location = path.join(package_path, "ayapkg.toml")
 
@@ -73,7 +76,11 @@ const function get_manifest_file(origin_path: path.Pathlike, from_path: path.Pat
 	return dependency_manifest
 end
 
-const function get_require_path(origin_path: path.Pathlike, from_path: path.Pathlike?, dependency_of: path.Pathlike): path.Pathlike | false?
+const function get_require_path(
+	origin_path: path.Pathlike,
+	from_path: path.Pathlike?,
+	dependency_of: path.Pathlike
+): path.Pathlike | false?
 	const package_path = if from_path then path.join(origin_path, from_path) else origin_path
 	const dependency_manifest = get_manifest_file(origin_path, from_path, dependency_of)
 
@@ -95,6 +102,7 @@ const function get_require_path(origin_path: path.Pathlike, from_path: path.Path
 end
 
 function installation.install_dependencies(ayapkg: path.Path, environment: Environment)
+	print(string.rep("=", 20), "passed root", environment.root)
 	const package_folder = path.dirname(ayapkg)
 	const ayamanifest = manifest.read(ayapkg)
 
@@ -137,7 +145,7 @@ function installation.install_dependencies(ayapkg: path.Path, environment: Envir
 				-- check if the package exists
 				const id = `git#{dependency.commit}`
 				const git_path = path.resolve(environment.root, "pkgs", "_index", id)
-				print(environment.root)
+				print("root", environment.root)
 
 				if fs.exists(git_path) == false then
 					installation.clone(ayamanifest, dep_name, tostring(git_path))
@@ -145,6 +153,8 @@ function installation.install_dependencies(ayapkg: path.Path, environment: Envir
 					installation.fetch(ayamanifest, dep_name, tostring(git_path))
 				end
 
+				print("git path", git_path)
+				print("dependency path", dependency.from_path)
 				const package_path = if dependency.from_path then path.join(git_path, dependency.from_path) else git_path
 				const ayapkg_manifest_location = path.join(package_path, "ayapkg.toml")
 
@@ -154,7 +164,10 @@ function installation.install_dependencies(ayapkg: path.Path, environment: Envir
 
 			-- link the package
 			if require_path then
-				generate_linker_file(path.normalize(require_path), path.join(package_folder, "pkgs", "links", `{dep_name}.luau`))
+				generate_linker_file(
+					path.normalize(require_path),
+					path.join(package_folder, "pkgs", "links", `{dep_name}.luau`)
+				)
 			else
 				print(text_styling.warn(`missing require path for {dep_name} from {package_folder}`))
 			end

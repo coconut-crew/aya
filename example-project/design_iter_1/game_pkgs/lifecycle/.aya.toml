@@ -1,0 +1,5 @@
+[package]
+name = "lifecycle"
+main = "init.luau"
+
+[package.bin]

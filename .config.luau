@@ -5,6 +5,8 @@ const luau_config = {
 		std = "~/.lute/typedefs/1.0.1/std",
 		lute = "~/.lute/typedefs/1.0.1/lute",
 		vendor = "./vendor",
+
+		["aya"] = "./aya",
 		["aya-common"] = "./aya/common",
 		["aya-compose"] = "./aya/compose",
 		["aya-init"] = "./aya/install",

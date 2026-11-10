@@ -1,9 +1,8 @@
-const subcommand_ty = require("@aya-common/subcommand_ty")
 const installation = require("@self/installation")
 const manifest = require("@self/manifest")
 const path = require("@std/path")
 const process = require("@std/process")
-const cli = require("@vendor/cli")
+const subcommand_ty = require("@aya-common/subcommand_ty")
 
 const function install(set_path: string?)
 	-- const project_manifest = manifest.read(path.join(process.cwd(), "ayapkg.toml"))
