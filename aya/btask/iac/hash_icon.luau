@@ -1,7 +1,7 @@
 const crypto = require("@lute/crypto")
 const fs = require("@std/fs")
 const path = require("@std/path")
-const to_hex = require("./to_hex")
+const to_hex = require("@aya/common/utils/to_hex")
 
 local hash_icon = {}
 

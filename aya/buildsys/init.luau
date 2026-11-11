@@ -6,7 +6,7 @@ const static_ninja_content = require("@aya/buildsys/static_ninja_content")
 
 const buildsys = {}
 
-function buildsys.bproc_regen()
+function buildsys.cmd_regen()
 	fs.createDirectory(anchors.build(), {
 		makeParents = true,
 	})
@@ -14,17 +14,17 @@ function buildsys.bproc_regen()
 	static_ninja_content.write_rules()
 end
 
-function buildsys.bproc_link(crate_loc: path.Pathlike)
+function buildsys.cmd_link(crate_loc: path.Pathlike)
 	fs.createDirectory(path.join(anchors.build(), "links"), {
 		makeParents = true,
 	})
 end
 
-function buildsys.bproc_build(src: path.Pathlike, dst: path.Pathlike)
+function buildsys.cmd_build(src: path.Pathlike, dst: path.Pathlike)
 	-- temp
 	fs.copy(src, dst)
 end
 
-function buildsys.bproc_discover_deps() end
+function buildsys.cmd_discover_deps() end
 
 return table.freeze(buildsys)

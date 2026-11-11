@@ -46,6 +46,24 @@ test.suite("semver.parse", function(suite)
 	suite:case("rejects text before the version", function(t)
 		t.throws(semver.parse, "version 1.2.3")
 	end)
+
+	suite:case("accepts zero as a version number", function(t)
+		t.eq(semver.parse("0.0.0"), version(0, 0, 0))
+	end)
+
+	suite:case("rejects leading zeros in the major, minor or patch number", function(t)
+		t.throwsWith("has a leading zero, this is not allowed", semver.parse, "01.2.3")
+		t.throwsWith("has a leading zero, this is not allowed", semver.parse, "1.02.3")
+		t.throwsWith("has a leading zero, this is not allowed", semver.parse, "1.2.03")
+	end)
+
+	suite:case("rejects leading zeros in a numeric prerelease identifier", function(t)
+		t.throwsWith("has a leading zero, this is not allowed", semver.parse, "1.2.3-alpha.01")
+	end)
+
+	suite:case("allows leading zeros in an alphanumeric prerelease identifier", function(t)
+		t.eq(semver.parse("1.2.3-0abc").prerelease, "0abc")
+	end)
 end)
 
 test.suite("semver.compatible", function(suite)

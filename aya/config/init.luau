@@ -11,6 +11,7 @@ type BaseDependency = {}
 export type GitDependency = type_fns.Extend<BaseDependency, {
 	remote: string,
 	branch: string,
+
 	revision: string,
 }>
 
@@ -80,6 +81,10 @@ function config.find_closest_config(loc: path.Pathlike): path.Pathlike?
 	end
 
 	return nil
+end
+
+function config.validate(data: string): Identity
+	return toml.deserialize(data) :: any
 end
 
 return table.freeze(config)

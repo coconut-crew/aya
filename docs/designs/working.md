@@ -33,6 +33,23 @@ For convenience, a package may choose to export only _one_ crate. This is useful
 ### Example
 
 ```toml
+[package]
+name = ""
+version = "0.1.0"
+exports = []
+
+[dependencies]
+
+
+[crates.main]
+type = "lib"
+exports = ["src/init.luau"]
+link_against = [
+	"colorful"
+]
+```
+
+```toml
 # A content_management package.
 [package]
 name = "content_management"
@@ -52,7 +69,8 @@ log = "coconut-crew/log@0.1.0"
 type = "lib"
 exports = ["./cm_server/init.luau"]
 depends_on = [
-	"cm_common"
+	"cm_common",
+	""
 ]
 
 [crate.cm_client]

@@ -1,4 +1,4 @@
-const action_ty = require("@aya/cmds/pkg/providers/action_ty")
+const action_ty = require("@aya/pkg/pkg_types")
 
 const git = {}
 

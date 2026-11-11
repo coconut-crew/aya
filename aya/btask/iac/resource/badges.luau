@@ -1,4 +1,4 @@
-const formdata = require("../formdata")
+const formdata = require("@vendor/formdata")
 const fs = require("@std/fs")
 const hash_icon = require("../hash_icon")
 const json = require("@vendor/json")

@@ -6,14 +6,7 @@ const luau_config = {
 		lute = "~/.lute/typedefs/1.0.1/lute",
 		vendor = "./vendor",
 
-		["aya"] = "./aya",
-		["aya-common"] = "./aya/common",
-		["aya-compose"] = "./aya/compose",
-		["aya-init"] = "./aya/install",
-		["aya-make"] = "./aya/make",
-		["aya-pkg"] = "./aya/pkg",
-		["aya-test"] = "./aya/test",
-		["aya-installation"] = "./aya/installation",
+		aya = "./aya",
 		pkgs = "./pkgs/links",
 	},
 

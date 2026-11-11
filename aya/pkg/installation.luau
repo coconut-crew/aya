@@ -1,10 +1,10 @@
 const fs = require("@std/fs")
-const generate_linker_file = require("@aya-common/generate_linker_file")
-const glob = require("@aya-common/glob")
+const generate_linker_file = require("@aya/common/generate_linker_file")
+const glob = require("@aya/common/glob")
 const manifest = require("./manifest")
 const path = require("@std/path")
 const process = require("@std/process")
-const text_styling = require("@aya-common/text_styling")
+const text_styling = require("@aya/common/text_styling")
 
 const installation = {}
 

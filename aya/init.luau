@@ -56,7 +56,7 @@ anchors.set(process.cwd())
 
 if parsed.bproc then
 	if parsed.bproc.regen then
-		buildsys.bproc_regen()
+		buildsys.cmd_regen()
 	end
 end
 
