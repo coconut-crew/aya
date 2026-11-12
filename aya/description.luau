@@ -8,19 +8,6 @@ const fs = require("@std/fs")
 const path = require("@std/path")
 const pkg = require("@aya/cmds/pkg")
 
-export type CrateLib = {
-	type: "lib",
-	exports: path.Pathlike,
-}
-
-export type CrateBin = {
-	type: "task",
-	alias: string,
-	main: path.Pathlike,
-}
-
-export type Crate = CrateLib | CrateBin
-
 export type Package = {
 	crates: {
 		[string]: Crate,

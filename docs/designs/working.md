@@ -34,70 +34,49 @@ For convenience, a package may choose to export only _one_ crate. This is useful
 
 ```toml
 [package]
-name = ""
-version = "0.1.0"
-exports = []
-
-[dependencies]
-
-
-[crates.main]
-type = "lib"
-dir = "src/"
-exports = ["src/init.luau"]
-link_against = [
-	"colorful"
-]
-```
-
-```toml
-# A content_management package.
-[package]
 name = "content_management"
 version = "0.1.0"
-exports = [
-	"cm_server",
-	"cm_client",
-	"cm_reflection"
-]
+edition = "0.1.0"
 
 [dependencies]
-replication = "coconut-crew/replication@0.1.0"
-lifecycle = "coconut-crew/lifecycle@0.1.0"
-log = "coconut-crew/log@0.1.0"
+log = { version = "whatever" }
 
-[crate.cm_server]
-type = "lib"
-exports = ["./cm_server/init.luau"]
-depends_on = [
-	"cm_common",
-	""
+[crate.server]
+dir = "crates/cm/server"
+needs = [
+	"log/server",
+
+	# Not specifying a package == defaults to this crate
+	# so this is equivalent to "content_management/shared"
+	"shared"
 ]
-
-[crate.cm_client]
-type = "lib"
 exports = [
-	"./cm_client/init.luau",
-	"./cm_client/meow.luau"
-]
-depends_on = [
-	"cm_common"
+	# Relative to the crate
+	"registry.luau"
 ]
 
-[crate.cm_reflection]
-type = "task"
-aliases = ["cm-reflect","cm-inspect"]
-entry_point = "./cm_reflection/main.luau"
-depends_on = [
-	"cm_common"
+[crate.cli]
+dir = "crates/cm/cli"
+needs = [
+	# Main exports don't need to "index" the pacakge
+	"log"
 ]
+exports = []
 
-[crate.cm_common]
-type = "lib"
+[crate.shared]
+dir = "crates/cm/shared"
+needs = [
+	"log",
+]
 exports = [
-	"./common/utils.luau"
-	"./common/types.luau"
+	# Supports glob exports if you just wanna export everything
+	"/**"
 ]
+
+# Shell commands aren't limited to crates
+[bin.cli]
+aliases = ["cm", "content-management", "cm-reflection"]
+entry = "cli/main.luau"
 ```
 
 # Components

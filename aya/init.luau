@@ -52,11 +52,19 @@ table.remove(args, 1)
 
 const parsed = cli_parser.parse(entry, args)
 
-anchors.set(process.cwd())
-
 if parsed.bproc then
 	if parsed.bproc.regen then
 		buildsys.cmd_regen()
+	end
+elseif parsed.make then
+	if parsed.make.build then
+		anchors.set(parsed.make.build.location)
+
+		buildsys.build()
+	elseif parsed.make.configure then
+		anchors.set(parsed.make.configure.location)
+
+		buildsys.configure()
 	end
 end
 
