@@ -19,7 +19,7 @@ function static_ninja_content.write_rules()
 
 					name = "regen",
 					variables = {
-						command = "aya bproc regen",
+						command = "aya bproc regen $in $out",
 					},
 				},
 
@@ -28,7 +28,7 @@ function static_ninja_content.write_rules()
 
 					name = "build",
 					variables = {
-						command = "aya bproc build",
+						command = "aya bproc build $in $out",
 					},
 				},
 
@@ -37,7 +37,7 @@ function static_ninja_content.write_rules()
 
 					name = "scan",
 					variables = {
-						command = "aya bproc scan",
+						command = "aya bproc scan $in $out",
 					},
 				},
 
@@ -46,7 +46,16 @@ function static_ninja_content.write_rules()
 
 					name = "link",
 					variables = {
-						command = "aya bproc link",
+						command = "aya bproc link $in $out",
+					},
+				},
+
+				{
+					stat = "rule",
+
+					name = "compile",
+					variables = {
+						command = "lute compile $in $out",
 					},
 				},
 			},

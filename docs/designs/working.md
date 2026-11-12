@@ -43,6 +43,7 @@ exports = []
 
 [crates.main]
 type = "lib"
+dir = "src/"
 exports = ["src/init.luau"]
 link_against = [
 	"colorful"

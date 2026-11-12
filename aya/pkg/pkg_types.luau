@@ -18,19 +18,6 @@ export type PathInstall = {
 
 export type Install = GitInstall | PathInstall
 
---[[ Actions ]]
-
-type BaseInstallPackage = {
-	kind: "install_package",
-	location: path.Pathlike,
-	alias: string,
-}
-
-type BaseRemovePackage = {
-	kind: "remove_package",
-	alias: string,
-}
-
 -- Path action providers
 type AddPackage = {
 	action: "add",
@@ -42,6 +29,6 @@ type RemovePackage = {
 	install: Install,
 }
 
-export type PackageManagementAction = AddPackage
+export type PackageManagementAction = AddPackage | RemovePackage
 
 return nil

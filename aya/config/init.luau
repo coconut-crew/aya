@@ -1,29 +1,15 @@
 const anchors = require("@aya/common/anchors")
 const fs = require("@std/fs")
 const path = require("@std/path")
+const pkg_types = require("@aya/pkg/pkg_types")
 const toml = require("@vendor/toml")
 const type_fns = require("@vendor/type_fns")
 
 const CONFIG_FILE_NAME = ".aya.toml"
 
-type BaseDependency = {}
-
-export type GitDependency = type_fns.Extend<BaseDependency, {
-	remote: string,
-	branch: string,
-
-	revision: string,
-}>
-
-export type PathDependency = type_fns.Extend<BaseDependency, {
-	location: path.Pathlike,
-}>
-
-export type Dependency = GitDependency | PathDependency
-
 export type WorkspaceConfig = {
 	dependencies: {
-		[string]: Dependency,
+		[string]: pkg_types.Install,
 	},
 
 	packages: { path.Pathlike },
@@ -32,18 +18,16 @@ export type WorkspaceConfig = {
 export type CrateConfig =
 	| {
 		type: "lib",
-		dependencies: { string },
+		needs: { string },
 	}
 	| {
 		type: "task",
-		dependencies: { string },
+		alias: string,
+		needs: { string },
 	}
 
 export type PackageConfig = {
 	name: string,
-	version: string,
-
-	exports: {},
 
 	dependencies: {},
 }
