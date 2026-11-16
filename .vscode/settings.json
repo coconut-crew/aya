@@ -1,7 +1,12 @@
 {
 	"luau-lsp.platform.type": "standard",
 
-	"luau-lsp.ignoreGlobs": ["**/_Index/**", "build/**", "vendor/**"],
+	"luau-lsp.ignoreGlobs": [
+		"**/_Index/**",
+		"build/**",
+		"vendor/**",
+		"**/index/**"
+	],
 
 	"luau-lsp.completion.imports.useConst": true,
 	"luau-lsp.completion.imports.stringRequires.enabled": true,

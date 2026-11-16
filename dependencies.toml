@@ -1,0 +1,28 @@
+# All of these dependencies are `.gitignore`'d and placed in `./pkgs`.
+# They are installed in `.lute/install-dependencies`, runnable via `lute install-dependencies`.
+#
+# FORMAT
+#
+#	[<Name which will be used for git clone & package linking>]
+#	remote = "<git remote link>"
+#	branch = "<git branch name>"
+#	commit = "<git commit hash>"
+#	entry_point = "<path to entry point within the project>"
+
+[luninjau]
+remote = "https://github.com/coconut-crew/luninjau.git"
+branch = "main"
+commit = "cdd25743a1a8fbc578e71c1563038de21781a396"
+entry_point = "src/init.luau"
+
+[cli_parser]
+remote = "https://github.com/coconut-crew/cli-parser.git"
+branch = "main"
+commit = "cd0e874aa77f22aa2c62e9d78a896fff106b1523"
+entry_point = "src/init.luau"
+
+[colorful]
+remote = "https://github.com/coconut-crew/colorful"
+branch = "main"
+commit = "e62cce1b27b267c90a041314338c784b548044c5"
+entry_point = "src/init.luau"

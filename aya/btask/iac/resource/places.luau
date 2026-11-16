@@ -8,7 +8,9 @@ const places = {}
 
 const BASEPLATE = 95206881
 
-function places.create_place(universe_id: number): { ok: true, place_id: number } | { ok: false, response: net.Response }
+function places.create_place(
+	universe_id: number
+): { ok: true, place_id: number } | { ok: false, response: net.Response }
 	-- const actual_universe_id = universe.get_actual_universe_id(universe_id) or universe_id
 	-- if actual_universe_id then
 	-- 	print(styles.success(`got universe id {actual_universe_id}`))
@@ -32,7 +34,11 @@ function places.create_place(universe_id: number): { ok: true, place_id: number 
 		print(styles.detail("url"))
 
 		print(styles.detail("body"))
-		print(styles.detail(`https://apis.roblox.com/universes/v1/user/universes/{universe_id}/places`))
+		print(
+			styles.detail(
+				`https://apis.roblox.com/universes/v1/user/universes/{universe_id}/places`
+			)
+		)
 		print(styles.detail(json.serialize(response.headers, true)))
 		print(styles.detail(json.serialize({ templatePlaceId = BASEPLATE }, true)))
 		return {
@@ -82,7 +88,9 @@ function places.update_place_settings(place_id: number, settings: types.Place)
 				then "Automatic"
 				elseif settings.server_fill == "maximum" then "Empty"
 				else "Custom",
-			customSocialSlotsCount = if type(settings.server_fill) == "table" then settings.server_fill.reversed_slots else nil,
+			customSocialSlotsCount = if type(settings.server_fill) == "table"
+				then settings.server_fill.reversed_slots
+				else nil,
 
 			allowCopying = settings.allow_copying or false,
 			allowedGearTypes = {},

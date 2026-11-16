@@ -50,7 +50,11 @@ function request.request(
 		const ratelimit_reset_when = response.headers["x-ratelimit-reset"]
 
 		if rate_limit_remaining ~= nil and rate_limit_remaining <= 1 then
-			print(styles.warning(`request quota for {url} has been reached. yielding before continuing to reset quota.`))
+			print(
+				styles.warning(
+					`request quota for {url} has been reached. yielding before continuing to reset quota.`
+				)
+			)
 			task.wait(tonumber(ratelimit_reset_when))
 		end
 	end

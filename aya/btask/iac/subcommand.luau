@@ -160,13 +160,25 @@ elseif subcommand == "info" then
 	const result = db.get_results()
 elseif subcommand == "publish" then
 	parser:add("staging", "option", { help = "uses the staging configuration" })
-	parser:add("production", "option", { aliases = { "prod" }, help = "uses the production configuration" })
+	parser:add(
+		"production",
+		"option",
+		{ aliases = { "prod" }, help = "uses the production configuration" }
+	)
 	parser:add(
 		"target",
 		"option",
-		{ default = "dev-default", aliases = { "t" }, help = "the target to configure. by default dev-default" }
+		{
+			default = "dev-default",
+			aliases = { "t" },
+			help = "the target to configure. by default dev-default",
+		}
 	)
-	parser:add("key", "positional", { required = true, help = "the key that will be published into" })
+	parser:add(
+		"key",
+		"positional",
+		{ required = true, help = "the key that will be published into" }
+	)
 
 	parser:parse({ table.unpack(process.args, 3) })
 
@@ -239,7 +251,11 @@ elseif subcommand == "publish" then
 		return target_data
 	end
 
-	const function compile_target(target: project_decl.target, lockfile: iac.ExperienceLockFile, name)
+	const function compile_target(
+		target: project_decl.target,
+		lockfile: iac.ExperienceLockFile,
+		name
+	)
 		const dev_session = dev.session({
 			user = _dev_user,
 			project_id = name,
@@ -254,7 +270,9 @@ elseif subcommand == "publish" then
 
 	const config = produce_config(iac_config :: iac.ExperienceConfig)
 	const previous_config = db.get_result(key)
-	const old_config = if previous_config == nil then db.obtain_unused_experience_id() else previous_config
+	const old_config = if previous_config == nil
+		then db.obtain_unused_experience_id()
+		else previous_config
 	const new_config = iac.update_experience(config, old_config)
 	iac.update_result(key, new_config)
 
@@ -268,9 +286,12 @@ elseif subcommand == "publish" then
 	-- the old config did not exist at all, so the universe has to be recreated.
 	-- notify developers that they need to config this universe.
 	if old_config == nil then
-		const UNIVERSE_DASHBOARD_LINK = `https://create.roblox.com/dashboard/creations/experiences/{experience_id}`
+		const UNIVERSE_DASHBOARD_LINK =
+			`https://create.roblox.com/dashboard/creations/experiences/{experience_id}`
 		print(
-			styles.error(`UNIVERSE {new_config.universe_id} HAS NOT BEEN CONFIGURED. PLEASE CONFIGURE SO TESTERS CAN ACCESS.`)
+			styles.error(
+				`UNIVERSE {new_config.universe_id} HAS NOT BEEN CONFIGURED. PLEASE CONFIGURE SO TESTERS CAN ACCESS.`
+			)
 		)
 		print(styles.error(`CONFIGURE HERE: {UNIVERSE_DASHBOARD_LINK}`))
 

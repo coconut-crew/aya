@@ -21,11 +21,19 @@ function universe.create(
 
 	if response.ok then
 		const body = json.deserialize(response.body)
-		print(styles.success(`created new universe id={body.universeId} root place={body.rootPlaceId}`))
+		print(
+			styles.success(
+				`created new universe id={body.universeId} root place={body.rootPlaceId}`
+			)
+		)
 
 		return { ok = true, universe_id = body.universeId, root_place_id = body.rootPlaceId }
 	else
-		print(styles.warning(styles.header(`failed to create universe under {owner.id} (kind={owner.kind})`)))
+		print(
+			styles.warning(
+				styles.header(`failed to create universe under {owner.id} (kind={owner.kind})`)
+			)
+		)
 		print(styles.warning(`{response.status} {response.body}`))
 		return { ok = false, response = response }
 	end
@@ -33,8 +41,12 @@ end
 
 function universe.get_actual_universe_id(asset_universe_id: number)
 	print(styles.detail(`getting actual universe id for {asset_universe_id}`))
-	const universe_id_res =
-		request.request("GET", `https://apis.roblox.com/universes/v1/places/{asset_universe_id}/universe`, "", {})
+	const universe_id_res = request.request(
+		"GET",
+		`https://apis.roblox.com/universes/v1/places/{asset_universe_id}/universe`,
+		"",
+		{}
+	)
 
 	if universe_id_res.ok == false then
 		print(styles.error(`failed to retrieve id`))

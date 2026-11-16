@@ -1,4 +1,4 @@
-const semver = require("@aya/common/semver")
+const semver = require("@aya/pkg/utils/semver")
 const test = require("@std/test")
 
 const function version(major: number, minor: number, patch: number): semver.Identity
@@ -66,6 +66,39 @@ test.suite("semver.parse", function(suite)
 	end)
 end)
 
+test.suite("semver.order", function(suite)
+	const function older(left: string, right: string): boolean
+		return semver.compare(semver.parse(left), semver.parse(right)) < 0
+	end
+
+	suite:case("orders by major, then minor, then patch", function(t)
+		t.that(older("1.9.9", "2.0.0"))
+		t.that(older("1.2.9", "1.10.0"))
+		t.that(older("1.2.3", "1.2.4"))
+	end)
+
+	suite:case("puts a prerelease before its release", function(t)
+		t.that(older("1.0.0-rc.1", "1.0.0"))
+		t.that(older("1.0.0", "1.0.1-0"))
+	end)
+
+	suite:case("follows the semver spec's prerelease precedence example", function(t)
+		const ordered = { "alpha", "alpha.1", "alpha.beta", "beta", "beta.2", "beta.11", "rc.1" }
+		for index = 1, #ordered - 1 do
+			t.that(older(`1.0.0-{ordered[index]}`, `1.0.0-{ordered[index + 1]}`))
+		end
+	end)
+
+	suite:case("ignores build metadata", function(t)
+		t.eq(semver.compare(semver.parse("1.0.0+a"), semver.parse("1.0.0+b")), 0)
+	end)
+
+	suite:case("compare reports whether the left version is newer", function(t)
+		t.that(semver.newer(version(2, 0, 0), version(1, 0, 0)))
+		t.never.that(semver.newer(version(1, 0, 0), version(1, 0, 0)))
+	end)
+end)
+
 test.suite("semver.compatible", function(suite)
 	suite:case("accepts minor and patch differences once major is at least 1", function(t)
 		t.that(semver.compatible(version(1, 2, 3), version(1, 7, 0)))
@@ -81,5 +114,38 @@ test.suite("semver.compatible", function(suite)
 
 	suite:case("accepts patch differences when major is 0", function(t)
 		t.that(semver.compatible(version(0, 3, 1), version(0, 3, 4)))
+	end)
+end)
+
+test.suite("semver.compat_key", function(suite)
+	suite:case("uses the major version once major is at least 1", function(t)
+		t.eq(semver.compat_key(version(1, 7, 3)), "1")
+		t.eq(semver.compat_key(version(12, 0, 0)), "12")
+	end)
+
+	suite:case("uses the minor version when major is 0", function(t)
+		t.eq(semver.compat_key(version(0, 3, 9)), "0.3")
+	end)
+
+	suite:case("gives two versions the same key exactly when they are compatible", function(t)
+		const versions = {
+			version(1, 0, 0),
+			version(1, 9, 2),
+			version(2, 0, 0),
+			version(0, 3, 0),
+			version(0, 3, 7),
+			version(0, 4, 0),
+		}
+
+		for _, left in versions do
+			for _, right in versions do
+				const same_key = semver.compat_key(left) == semver.compat_key(right)
+				t.eq(
+					same_key,
+					semver.compatible(left, right),
+					`{semver.print(left)} vs {semver.print(right)}`
+				)
+			end
+		end
 	end)
 end)

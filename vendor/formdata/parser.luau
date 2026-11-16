@@ -63,7 +63,10 @@ local function parseMultipartContentDisposition(stream: Stream.Stream): (string,
 	-- skil all whitespaces
 	stream:trim()
 
-	assert(stream:advance(10) == "form-data;", `Invalid form data: {stream.textSource} (invalid content-disposition)`)
+	assert(
+		stream:advance(10) == "form-data;",
+		`Invalid form data: {stream.textSource} (invalid content-disposition)`
+	)
 
 	-- skil all whitespaces
 	stream:trim()
@@ -100,7 +103,10 @@ local function parseContentType(stream: Stream.Stream): string
 	local header = stream:advance(13)
 
 	assert(header, `Invalid form data: {stream.textSource} (unexpected end of stream)`)
-	assert(string.lower(header) == "content-type:", `Invalid form data: {stream.textSource} (invalid content-type)`)
+	assert(
+		string.lower(header) == "content-type:",
+		`Invalid form data: {stream.textSource} (invalid content-type)`
+	)
 
 	-- skil all whitespaces
 	stream:trim()
@@ -138,7 +144,10 @@ local function parseContentTransferEncoding(stream: Stream.Stream): string?
 		-- skip the newline
 		stream:advance(1)
 
-		assert(contentTransferEncoding, `Invalid form data: {stream.textSource} (unexpected end of stream)`)
+		assert(
+			contentTransferEncoding,
+			`Invalid form data: {stream.textSource} (unexpected end of stream)`
+		)
 
 		return contentTransferEncoding
 	else
@@ -173,13 +182,22 @@ end
 --[[
 	The main function that is called to parse the form data.
 ]]
-local function parseMultipartFormData(stream: Stream.Stream, boundary: string): { DecodedFormDataValue }
+local function parseMultipartFormData(
+	stream: Stream.Stream,
+	boundary: string
+): { DecodedFormDataValue }
 	local formData = {}
 
 	while true do
 		-- assertions to ensure that the header is valid
-		assert(stream:advance(2) == "--", `Invalid form data: {stream.textSource} (expected formdata boundary)`)
-		assert(stream:advance(#boundary) == boundary, `Invalid form data: {stream.textSource} (expected formdata boundary)`)
+		assert(
+			stream:advance(2) == "--",
+			`Invalid form data: {stream.textSource} (expected formdata boundary)`
+		)
+		assert(
+			stream:advance(#boundary) == boundary,
+			`Invalid form data: {stream.textSource} (expected formdata boundary)`
+		)
 		assert(stream:advance(2) == "\r\n", `Invalid form data: {stream.textSource} (CR Ls)`)
 
 		-- get the body of the formdata entry
@@ -217,11 +235,17 @@ local function parseMultipartMime(stream: Stream.Stream): string
 	local matchedBoundary
 	local boundary
 
-	assert(stream:advance(19) == "multipart/form-data", `Invalid mime type: {stream.textSource} (expected formdata mime type)`)
+	assert(
+		stream:advance(19) == "multipart/form-data",
+		`Invalid mime type: {stream.textSource} (expected formdata mime type)`
+	)
 
 	-- as defined in the examples in RFC1867 - ; can be used alongside , to split the parameters of this
 	-- 		mime type
-	assert(stream:peek() == ";" or stream:peek() == ",", `Invalid mime type: {stream.textSource} (unknown delimiter)`)
+	assert(
+		stream:peek() == ";" or stream:peek() == ",",
+		`Invalid mime type: {stream.textSource} (unknown delimiter)`
+	)
 
 	-- skip the token since we only :peek() above
 	stream:advance()
@@ -235,7 +259,10 @@ local function parseMultipartMime(stream: Stream.Stream): string
 	-- match the boundary value
 	matchedBoundary = string.match(boundary, "boundary=(.+)")
 
-	assert(matchedBoundary ~= nil, `Invalid mime type: {stream.textSource} (failed to match boundary)`)
+	assert(
+		matchedBoundary ~= nil,
+		`Invalid mime type: {stream.textSource} (failed to match boundary)`
+	)
 
 	return matchedBoundary
 end

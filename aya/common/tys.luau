@@ -1,13 +1,24 @@
 const path = require("@std/path")
 
---[[
-	Crates
-]]
+export type DependencyConfig =
+	{
+		name: string,
+		version: string,
+	}
+	| {
+		name: string,
+		version: string,
+		github: string,
+	}
 
--- uuid
+--[[
+	Build object types
+]]
 export type CrateId = string
+export type PackageId = string
 
 export type Crate = {
+	package: string,
 	name: string,
 
 	-- Relative to anchor.root
@@ -16,13 +27,6 @@ export type Crate = {
 	exports: { path.Pathlike },
 	needs: { path.Pathlike },
 }
-
---[[
-	Packages
-]]
-
--- uuid
-export type PackageId = string
 
 export type Package = {
 	name: string,

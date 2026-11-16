@@ -24,7 +24,8 @@ type function _CombineTableAndSetIndexer(a: type, b: type, value: type, idx: typ
 
 	return types.newtable(t :: any, { index = idx, readresult = value, writeresult = value })
 end
-export type CombineTableAndSetIndexer<a, b, value = never, idx = number> = _CombineTableAndSetIndexer<a, b, value, idx>
+export type CombineTableAndSetIndexer<a, b, value = never, idx = number> =
+	_CombineTableAndSetIndexer<a, b, value, idx>
 
 type function _CombineTables(a: type, others: type)
 	local output = types.copy(a)
@@ -386,7 +387,9 @@ export type function DeepTableMerge(a: type, b: type)
 				output:setreadproperty(key, merged)
 			end
 		else -- if existing ~= read then
-			error(`cannot merge prop {key:value()} of type '{read.tag}' with existing type '{existing.tag}'`)
+			error(
+				`cannot merge prop {key:value()} of type '{read.tag}' with existing type '{existing.tag}'`
+			)
 		end
 	end
 	return output

@@ -17,7 +17,11 @@ const function get_form(gamepass: types.Gamepass)
 	form:append("name", gamepass.name)
 	form:append("description", gamepass.description)
 
-	form:append("imageFile", fs.readFileToString(gamepass.icon), `icon{path.extname(gamepass.icon)}`)
+	form:append(
+		"imageFile",
+		fs.readFileToString(gamepass.icon),
+		`icon{path.extname(gamepass.icon)}`
+	)
 	form:append("isForSale", `{gamepass.robux_price ~= nil}`)
 	if gamepass.robux_price then
 		form:append("price", `{gamepass.robux_price}`)
@@ -52,7 +56,13 @@ function gamepass.create(
 			return gamepass.create(universe_id, gamepass_data, true)
 		end
 
-		print(styles.warning(styles.header(`failed to create gamepass {gamepass_data.name} on universe {universe_id}`)))
+		print(
+			styles.warning(
+				styles.header(
+					`failed to create gamepass {gamepass_data.name} on universe {universe_id}`
+				)
+			)
+		)
 		print(styles.warning(`{response.status} {response.body}`))
 		return { ok = false, response = response }
 	end
@@ -64,7 +74,11 @@ function gamepass.update_id(
 	gamepass_data: types.Gamepass,
 	retry_dynamic_pricing: boolean?
 )
-	print(styles.detail(`updating gamepass under {universe_id} with id {gamepass_id} (name={gamepass_data.name})`))
+	print(
+		styles.detail(
+			`updating gamepass under {universe_id} with id {gamepass_id} (name={gamepass_data.name})`
+		)
+	)
 	const form = get_form(gamepass_data)
 	const response = request.request(
 		"PATCH",
@@ -84,7 +98,9 @@ function gamepass.update_id(
 
 		print(
 			styles.warning(
-				styles.header(`failed to patch gamepass {gamepass_data.name} ({gamepass_id}) on universe {universe_id}`)
+				styles.header(
+					`failed to patch gamepass {gamepass_data.name} ({gamepass_id}) on universe {universe_id}`
+				)
 			)
 		)
 		print(styles.warning(`{response.status} {response.body}`))

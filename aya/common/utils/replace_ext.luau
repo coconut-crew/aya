@@ -12,7 +12,9 @@ const function replace_ext(input: path.Path, new_ext: string): path.Path
 		return path.parse(input)
 	end
 
-	const dot_ext = if new_ext == "" or string.sub(new_ext, 1, 1) == "." then new_ext else "." .. new_ext
+	const dot_ext = if new_ext == "" or string.sub(new_ext, 1, 1) == "."
+		then new_ext
+		else "." .. new_ext
 	const extension = path.extname(input)
 	const stem = string.sub(file_name, 1, #file_name - #extension)
 	const dir = path.dirname(input)

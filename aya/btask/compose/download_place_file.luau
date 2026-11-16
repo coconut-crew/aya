@@ -39,7 +39,11 @@ const function download(place: RobloxPlace, version: number): (string, string)
 	local version = place_version_lock.get_version(place)
 
 	if version == nil then
-		print(styles.error(`Unable to find a version for universe {place.universe_id}, place {place.place_id}`))
+		print(
+			styles.error(
+				`Unable to find a version for universe {place.universe_id}, place {place.place_id}`
+			)
+		)
 		print(styles.warning(`Getting latest version from Roblox and adding to lock file`))
 
 		local ok, place_version = pull_latest_version.pull(place.place_id)
@@ -69,12 +73,14 @@ const function download(place: RobloxPlace, version: number): (string, string)
 		rbxlbody = load_cached(place, version)
 	else
 		print(styles.header(`downloading version {version} of {place.place_id}`))
-		local response =
-			net.request(`https://apis.roblox.com/asset-delivery-api/v1/assetId/{place.place_id}/version/{version}`, {
+		local response = net.request(
+			`https://apis.roblox.com/asset-delivery-api/v1/assetId/{place.place_id}/version/{version}`,
+			{
 				headers = {
 					["x-api-key"] = api_key,
 				},
-			})
+			}
+		)
 		local body: { location: string } = json.deserialize(response.body) :: any
 
 		local location = body.location

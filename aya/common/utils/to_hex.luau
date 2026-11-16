@@ -26,7 +26,8 @@ function to_hex.buffer(input: buffer): buffer
 		const idx = i * 2
 
 		const input_char = buffer.readu8(input, i)
-		const upper, lower = bit32.band(input_char, 0b00001111), bit32.band(bit32.rshift(input_char, 4), 0b00001111)
+		const upper, lower =
+			bit32.band(input_char, 0b00001111), bit32.band(bit32.rshift(input_char, 4), 0b00001111)
 
 		buffer.writeu8(output, idx, hexadecimal[lower + 1])
 		buffer.writeu8(output, idx + 1, hexadecimal[upper + 1])

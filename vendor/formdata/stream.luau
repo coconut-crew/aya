@@ -54,7 +54,8 @@ function Stream.Prototype.advance(self: Stream, length: number?): string?
 		return nil
 	end
 
-	local blockSource = string.sub(self.textSource, self.cursorPosition + 1, self.cursorPosition + absoluteLength)
+	local blockSource =
+		string.sub(self.textSource, self.cursorPosition + 1, self.cursorPosition + absoluteLength)
 
 	self.cursorPosition += absoluteLength
 

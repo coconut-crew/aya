@@ -4,12 +4,13 @@ const DEFAULT_PRETTY_PRINT_DECIMALS = 4
 -- number) can accurately represent.
 const SCIENTIFIC_NOTATION_THRESHOLD = 10 ^ 16
 
-const colorful = require(`@vendor/colorful`)
+const colorful = require(`@pkg/colorful`)
 
-const color = colorful.color
-const modifier = colorful.modifier
+const color = colorful.txt_colors
+const modifier = colorful.modifiers
 
-const brightblue, cyan, grey, magenta, underline = color.blue_bright, color.cyan, color.grey, color.magenta, modifier.underline
+const brightblue, cyan, grey, magenta, underline =
+	color.blue_bright, color.cyan, color.grey, color.magenta, modifier.underline
 
 type UnknownTbl = { [unknown]: unknown }
 
@@ -186,7 +187,9 @@ function pretty_print_from_epsilon(value: any, epsilon: number?): string
 		return _pretty_print(value)
 	end
 
-	pretty_print_digits_precision = if epsilon >= 1 then 0 else math.ceil(math.clamp(-math.log10(epsilon), 0, 100))
+	pretty_print_digits_precision = if epsilon >= 1
+		then 0
+		else math.ceil(math.clamp(-math.log10(epsilon), 0, 100))
 	const output = _pretty_print(value)
 	pretty_print_digits_precision = DEFAULT_PRETTY_PRINT_DECIMALS
 

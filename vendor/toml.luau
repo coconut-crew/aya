@@ -146,7 +146,9 @@ const function deserialize(input: string): { [string]: TomlValue }
 					end
 				else
 					if b2 < 0x80 or b2 > 0xBF then
-						error("TOML parse error: invalid UTF-8 continuation at position " .. (i + 1))
+						error(
+							"TOML parse error: invalid UTF-8 continuation at position " .. (i + 1)
+						)
 					end
 				end
 				if b3 < 0x80 or b3 > 0xBF then
@@ -167,7 +169,9 @@ const function deserialize(input: string): { [string]: TomlValue }
 					end
 				else
 					if b2 < 0x80 or b2 > 0xBF then
-						error("TOML parse error: invalid UTF-8 continuation at position " .. (i + 1))
+						error(
+							"TOML parse error: invalid UTF-8 continuation at position " .. (i + 1)
+						)
 					end
 				end
 
@@ -227,7 +231,8 @@ const function deserialize(input: string): { [string]: TomlValue }
 	end
 
 	const function isHexDigit(c: number?): boolean
-		return c ~= nil and ((c >= 48 and c <= 57) or (c >= 65 and c <= 70) or (c >= 97 and c <= 102))
+		return c ~= nil
+			and ((c >= 48 and c <= 57) or (c >= 65 and c <= 70) or (c >= 97 and c <= 102))
 	end
 
 	const function isOctDigit(c: number?): boolean
@@ -244,7 +249,11 @@ const function deserialize(input: string): { [string]: TomlValue }
 			return false
 		end
 
-		return (c >= 97 and c <= 122) or (c >= 65 and c <= 90) or (c >= 48 and c <= 57) or c == 95 or c == 45
+		return (c >= 97 and c <= 122)
+			or (c >= 65 and c <= 90)
+			or (c >= 48 and c <= 57)
+			or c == 95
+			or c == 45
 	end
 
 	-- control characters that are forbidden unescaped (everything < 0x20 except tab,
@@ -361,7 +370,11 @@ const function deserialize(input: string): { [string]: TomlValue }
 	const function parseHexEscape(): string
 		local hexStr = string.sub(src, pos, pos + 1)
 
-		if #hexStr < 2 or not isHexDigit(string.byte(hexStr, 1)) or not isHexDigit(string.byte(hexStr, 2)) then
+		if
+			#hexStr < 2
+			or not isHexDigit(string.byte(hexStr, 1))
+			or not isHexDigit(string.byte(hexStr, 2))
+		then
 			tomlParseError("invalid \\x escape")
 		end
 
@@ -1014,14 +1027,21 @@ const function deserialize(input: string): { [string]: TomlValue }
 			result ..= "e" .. expSign .. parseDigits(isDigit)
 		end
 
-		return if isFloat then tonumber(result) :: number else tonumber(signStr .. intDigits) :: number
+		return if isFloat
+			then tonumber(result) :: number
+			else tonumber(signStr .. intDigits) :: number
 	end
 
 	-- array and inline-table parsers (forward declared for mutual recursion)
 	local parseArray: () -> { TomlValue }
 	local parseInlineTable: () -> { [string]: TomlValue }
 	local parseKey: () -> { string }
-	local setNestedKey: (tbl: { [string]: TomlValue }, parts: { string }, value: TomlValue, fromDottedKey: boolean) -> ()
+	local setNestedKey: (
+		tbl: { [string]: TomlValue },
+		parts: { string },
+		value: TomlValue,
+		fromDottedKey: boolean
+	) -> ()
 
 	-- maps first byte of a value to its parser; digit range handled separately below
 	const valueDispatch: { [number]: () -> TomlValue } = table.freeze({
@@ -1297,7 +1317,12 @@ const function deserialize(input: string): { [string]: TomlValue }
 		return current, parts[#parts]
 	end
 
-	setNestedKey = function(tbl: { [string]: TomlValue }, parts: { string }, value: TomlValue, fromDottedKey: boolean)
+	setNestedKey = function(
+		tbl: { [string]: TomlValue },
+		parts: { string },
+		value: TomlValue,
+		fromDottedKey: boolean
+	)
 		local newKind = if fromDottedKey then "implicit-dotted" else "implicit-header"
 		local leafTbl, leafKey = navigateDotted(tbl, parts, newKind)
 
@@ -1365,7 +1390,9 @@ const function deserialize(input: string): { [string]: TomlValue }
 				break
 			end
 
-			tomlParseError(`expected ',' or '}}' in inline table, got '${string.char(c :: number)}'`)
+			tomlParseError(
+				`expected ',' or '}}' in inline table, got '${string.char(c :: number)}'`
+			)
 		end
 
 		return result

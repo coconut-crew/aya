@@ -100,7 +100,13 @@ end
 
 	Appends a new entry to the form data's internal 'entries' table.
 ]=]
-function FormData.Prototype.append(self: FormData, name: string, value: string, filename: string?, encoding: string?): ()
+function FormData.Prototype.append(
+	self: FormData,
+	name: string,
+	value: string,
+	filename: string?,
+	encoding: string?
+): ()
 	table.insert(self.entries, {
 		name = name,
 		value = value,
@@ -116,7 +122,13 @@ end
 
 	Follows the standard found here: https://xhr.spec.whatwg.org/#dom-formdata-append
 ]=]
-function FormData.Prototype.set(self: FormData, name: string, value: string, filename: string?, encoding: string?): ()
+function FormData.Prototype.set(
+	self: FormData,
+	name: string,
+	value: string,
+	filename: string?,
+	encoding: string?
+): ()
 	local index = filter(self.entries, function(object)
 		return object.name == name
 	end)

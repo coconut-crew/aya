@@ -209,7 +209,9 @@ function universe.update_settings(universe_id: number, experience: types.Experie
 		allowPrivateServers = if is_public then experience.private_servers ~= nil else nil,
 		privateServerPrice = if is_public and experience.private_servers == true
 			then 0
-			elseif experience.public and experience.private_servers then experience.private_servers.robux
+			elseif
+				experience.public and experience.private_servers
+			then experience.private_servers.robux
 			else nil,
 
 		isArchived = false,

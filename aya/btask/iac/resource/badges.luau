@@ -52,14 +52,21 @@ function badges.create(
 		print(styles.success(`successfully created new badge with id {badge_id}`))
 		return { ok = true, badge_id = badge_id }
 	else
-		print(styles.warning(styles.header(`failed to create badge {badge.name} on universe {universe_id}`)))
+		print(
+			styles.warning(
+				styles.header(`failed to create badge {badge.name} on universe {universe_id}`)
+			)
+		)
 		print(styles.warning(`{response.status} {response.body}`))
 		return { ok = false, response = response }
 	end
 end
 
 -- legacy-badge:manage
-function badges.update_icon(badge_id: number, badge: types.Badge): { ok: true } | { ok: false, response: net.Response }
+function badges.update_icon(
+	badge_id: number,
+	badge: types.Badge
+): { ok: true } | { ok: false, response: net.Response }
 	print(styles.detail(`updating badge icon {badge_id} with name {badge.name}`))
 	const form = formdata.new()
 
@@ -92,7 +99,10 @@ function badges.update_icon(badge_id: number, badge: types.Badge): { ok: true } 
 end
 
 --legacy-universe.badge:write
-function badges.update_id(badge_id: number, badge: types.Badge): { ok: true } | { ok: false, response: net.Response }
+function badges.update_id(
+	badge_id: number,
+	badge: types.Badge
+): { ok: true } | { ok: false, response: net.Response }
 	print(styles.detail(`updating badge settings for {badge_id} for {badge.name}`))
 	const response = request.request(
 		"POST",
@@ -122,7 +132,9 @@ function badges.has_changed(
 ): { change_icon: boolean, change_settings: boolean }
 	const hash = hash_icon.hash(new.icon)
 
-	const change_settings = new.name ~= old.name or new.description ~= old.description or new.enabled ~= old.enabled
+	const change_settings = new.name ~= old.name
+		or new.description ~= old.description
+		or new.enabled ~= old.enabled
 	const change_icon = hash ~= old_hash
 
 	return {

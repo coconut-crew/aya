@@ -17,7 +17,11 @@ const function get_form(gamepass: types.DeveloperProduct)
 	form:append("name", gamepass.name)
 	form:append("description", gamepass.description)
 
-	form:append("imageFile", fs.readFileToString(gamepass.icon), `icon{path.extname(gamepass.icon)}`)
+	form:append(
+		"imageFile",
+		fs.readFileToString(gamepass.icon),
+		`icon{path.extname(gamepass.icon)}`
+	)
 	form:append("isForSale", `{gamepass.robux_price ~= nil}`)
 	if gamepass.robux_price then
 		form:append("price", `{gamepass.robux_price}`)
@@ -27,8 +31,15 @@ const function get_form(gamepass: types.DeveloperProduct)
 	return form
 end
 
-function developerproduct.find_product_id(universe_id: number, product: types.DeveloperProduct): number?
-	print(styles.detail(`attempting to find developer product under {universe_id} with name {product.name}`))
+function developerproduct.find_product_id(
+	universe_id: number,
+	product: types.DeveloperProduct
+): number?
+	print(
+		styles.detail(
+			`attempting to find developer product under {universe_id} with name {product.name}`
+		)
+	)
 	const response = request.request(
 		"GET",
 		`https://apis.roblox.com/developer-products/v2/universes/{universe_id}/developer-products/creator`,
@@ -77,7 +88,13 @@ function developerproduct.create(
 		return { ok = true, product_id = product_id }
 	else
 		-- check if there is a developer product with that name already
-		print(styles.warning(styles.header(`failed to create developer product {product.name} on universe {universe_id}`)))
+		print(
+			styles.warning(
+				styles.header(
+					`failed to create developer product {product.name} on universe {universe_id}`
+				)
+			)
+		)
 		print(styles.warning(`{response.status} {response.body}`))
 
 		if response.body:find("Managed pricing must be accepted") and not retry_managed_pricing then
@@ -118,7 +135,9 @@ function developerproduct.update_id(
 	else
 		print(
 			styles.warning(
-				styles.header(`failed to patch developer product {product.name} ({product_id}) on universe {universe_id}`)
+				styles.header(
+					`failed to patch developer product {product.name} ({product_id}) on universe {universe_id}`
+				)
 			)
 		)
 		print(styles.warning(`{response.status} {response.body}`))
@@ -133,7 +152,11 @@ function developerproduct.update_id(
 	end
 end
 
-function developerproduct.has_changed(old: types.DeveloperProduct, new: types.DeveloperProduct, old_hash: string): boolean
+function developerproduct.has_changed(
+	old: types.DeveloperProduct,
+	new: types.DeveloperProduct,
+	old_hash: string
+): boolean
 	const hash = hash_icon.hash(new.icon)
 
 	const change_settings = new.name ~= old.name

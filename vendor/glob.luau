@@ -43,7 +43,12 @@
 local fs = require("@std/fs")
 local path = require("@std/path")
 
-local function matchesSegment(pattern: string, name: string, patternStart: number?, nameStart: number?): boolean
+local function matchesSegment(
+	pattern: string,
+	name: string,
+	patternStart: number?,
+	nameStart: number?
+): boolean
 	local patternIndex = patternStart or 1
 	local nameIndex = nameStart or 1
 	while patternIndex <= #pattern do
@@ -73,7 +78,10 @@ local function matchesSegment(pattern: string, name: string, patternStart: numbe
 				patternIndex += 1
 			end
 			local found = false
-			while patternIndex <= #pattern and string.sub(pattern, patternIndex, patternIndex) ~= "]" do
+			while
+				patternIndex <= #pattern
+				and string.sub(pattern, patternIndex, patternIndex) ~= "]"
+			do
 				local rangeLow = string.sub(pattern, patternIndex, patternIndex)
 				patternIndex += 1
 				if
@@ -129,7 +137,8 @@ local function matchStep(
 		if segment == "**" then
 			local best: MatchResult = "no_match"
 			for candidateIndex = inputIndex, #inputSegments + 1 do
-				local result = matchStep(patternSegments, inputSegments, patternIndex + 1, candidateIndex)
+				local result =
+					matchStep(patternSegments, inputSegments, patternIndex + 1, candidateIndex)
 				if result == "match" then
 					return "match"
 				elseif result == "partial" then
@@ -154,7 +163,12 @@ local function matchStep(
 	return "no_match"
 end
 
-local function walk(directory: path.Pathlike, segments: { string }, segmentIndex: number, results: { path.Path })
+local function walk(
+	directory: path.Pathlike,
+	segments: { string },
+	segmentIndex: number,
+	results: { path.Path }
+)
 	if segmentIndex > #segments then
 		return
 	end

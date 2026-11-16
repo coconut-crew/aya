@@ -92,13 +92,19 @@ const function render_type_function(file_contents: { string }, node: types.CstSt
 end
 
 const function generate_linker_file(src: path.Path, dst: path.Path)
-	const exported = query.findAllFromRoot(syntax.parse(fs.readFileToString(src)), function(node: types.CstNode): types.CstNode?
-		if node.kind == "stat" and ((node.tag == "typealias" or node.tag == "typefunction") and node.isExported) then
-			return node
-		end
+	const exported = query.findAllFromRoot(
+		syntax.parse(fs.readFileToString(src)),
+		function(node: types.CstNode): types.CstNode?
+			if
+				node.kind == "stat"
+				and ((node.tag == "typealias" or node.tag == "typefunction") and node.isExported)
+			then
+				return node
+			end
 
-		return nil
-	end)
+			return nil
+		end
+	)
 
 	const source_path = path.dirname(path.normalize(dst))
 	local entry_point = path.normalize(src)

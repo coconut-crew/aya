@@ -75,7 +75,8 @@ function iac.create_new_experience<T>(experience: T & types.Experience): types.E
 
 			if response.ok then
 				stored_gamepasses[key] = response.gamepass_id
-				stored_gamepass_icons[tostring(response.gamepass_id)] = hash_icon.hash(gamepass_data.icon)
+				stored_gamepass_icons[tostring(response.gamepass_id)] =
+					hash_icon.hash(gamepass_data.icon)
 			else
 				print(styles.error(`failed to make gamepass because {response.response.body}`))
 			end
@@ -88,7 +89,8 @@ function iac.create_new_experience<T>(experience: T & types.Experience): types.E
 
 			if response.ok then
 				stored_developerproducts[key] = response.product_id
-				stored_product_icons[tostring(response.product_id)] = hash_icon.hash(product_data.icon)
+				stored_product_icons[tostring(response.product_id)] =
+					hash_icon.hash(product_data.icon)
 			else
 				print(styles.error(`failed to make product because {response.response.body}`))
 			end
@@ -215,9 +217,14 @@ function iac.update_experience<T>(
 				end
 
 				new_template_data.gamepasses[gamepass_key :: any] = response.gamepass_id
-				new_template_data.gamepass_icons[tostring(response.gamepass_id)] = hash_icon.hash(new_gamepass.icon)
+				new_template_data.gamepass_icons[tostring(response.gamepass_id)] =
+					hash_icon.hash(new_gamepass.icon)
 			elseif
-				gamepass.has_changed(old_gamepass, new_gamepass, old_experience_data.gamepass_icons[tostring(old_gamepass_id)])
+				gamepass.has_changed(
+					old_gamepass,
+					new_gamepass,
+					old_experience_data.gamepass_icons[tostring(old_gamepass_id)]
+				)
 			then
 				const response = gamepass.update_id(universe_id, old_gamepass_id, new_gamepass)
 
@@ -226,7 +233,8 @@ function iac.update_experience<T>(
 					succeeded = false
 					continue
 				end
-				new_template_data.gamepass_icons[tostring(old_gamepass_id)] = hash_icon.hash(new_gamepass.icon)
+				new_template_data.gamepass_icons[tostring(old_gamepass_id)] =
+					hash_icon.hash(new_gamepass.icon)
 			end
 		end
 	end
@@ -246,7 +254,8 @@ function iac.update_experience<T>(
 				end
 
 				new_template_data.products[product_key :: any] = response.product_id
-				new_template_data.product_icons[tostring(response.product_id)] = hash_icon.hash(new_product.icon)
+				new_template_data.product_icons[tostring(response.product_id)] =
+					hash_icon.hash(new_product.icon)
 			elseif
 				developerproduct.has_changed(
 					old_product,
@@ -254,7 +263,8 @@ function iac.update_experience<T>(
 					old_experience_data.product_icons[tostring(old_product_id)]
 				)
 			then
-				const response = developerproduct.update_id(universe_id, old_product_id, new_product)
+				const response =
+					developerproduct.update_id(universe_id, old_product_id, new_product)
 
 				if response.ok == false then
 					print(styles.error("unable to update a product"))
@@ -262,7 +272,8 @@ function iac.update_experience<T>(
 					continue
 				end
 
-				new_template_data.product_icons[tostring(old_product_id)] = hash_icon.hash(new_product.icon)
+				new_template_data.product_icons[tostring(old_product_id)] =
+					hash_icon.hash(new_product.icon)
 			end
 		end
 	end
@@ -282,10 +293,14 @@ function iac.update_experience<T>(
 				end
 
 				new_template_data.badges[badge_key :: any] = response.badge_id
-				new_template_data.badge_icons[tostring(response.badge_id)] = hash_icon.hash(new_badge.icon)
+				new_template_data.badge_icons[tostring(response.badge_id)] =
+					hash_icon.hash(new_badge.icon)
 			else
-				const changed =
-					badges.has_changed(old_badge, new_badge, old_experience_data.product_icons[tostring(old_badge_id)])
+				const changed = badges.has_changed(
+					old_badge,
+					new_badge,
+					old_experience_data.product_icons[tostring(old_badge_id)]
+				)
 
 				if changed.change_icon then
 					const response = badges.update_icon(old_badge_id, new_badge)
@@ -295,7 +310,8 @@ function iac.update_experience<T>(
 						continue
 					end
 
-					new_template_data.badge_icons[tostring(old_badge_id)] = hash_icon.hash(new_badge.icon)
+					new_template_data.badge_icons[tostring(old_badge_id)] =
+						hash_icon.hash(new_badge.icon)
 				end
 
 				if changed.change_settings then
@@ -335,12 +351,18 @@ function iac.remove_key(key: string)
 	return db.unuse_id(key)
 end
 
-function iac.publish_to_target(result: types.ExperienceResult, place_key: string, place_file: string)
+function iac.publish_to_target(
+	result: types.ExperienceResult,
+	place_key: string,
+	place_file: string
+)
 	const universe_id = result.universe_id
 	const place_id = result.place_ids[place_key]
 
 	if universe_id == nil or place_id == nil then
-		print(styles.error(`missing universe id {universe_id} or place id {place_id}. cannot publish`))
+		print(
+			styles.error(`missing universe id {universe_id} or place id {place_id}. cannot publish`)
+		)
 		return
 	end
 

@@ -144,9 +144,12 @@ const function to_engine_avatar_settings(experience: types.Experience): types.En
 		default.AvatarAnimationRules.CustomRunAnimationEnabled = not not animation_rules.run
 		default.AvatarAnimationRules.CustomIdleAnimationEnabled = not not animation_rules.idle
 		default.AvatarAnimationRules.CustomClimbAnimationEnabled = not not animation_rules.climb
-		default.AvatarAnimationRules.CustomIdleAlt1AnimationEnabled = not not animation_rules.idle_alt1
-		default.AvatarAnimationRules.CustomIdleAlt2AnimationEnabled = not not animation_rules.idle_alt2
-		default.AvatarAnimationRules.CustomSwimIdleAnimationEnabled = not not animation_rules.swim_idle
+		default.AvatarAnimationRules.CustomIdleAlt1AnimationEnabled =
+			not not animation_rules.idle_alt1
+		default.AvatarAnimationRules.CustomIdleAlt2AnimationEnabled =
+			not not animation_rules.idle_alt2
+		default.AvatarAnimationRules.CustomSwimIdleAnimationEnabled =
+			not not animation_rules.swim_idle
 		default.AvatarAnimationRules.CustomSwimAnimationEnabled = not not animation_rules.swim
 		default.AvatarAnimationRules.CustomWalkAnimationEnabled = not not animation_rules.walk
 		default.AvatarAnimationRules.CustomFallAnimationEnabled = not not animation_rules.fall
@@ -187,15 +190,21 @@ const function to_engine_avatar_settings(experience: types.Experience): types.En
 		default.AvatarClothingRules.CustomShirtAccessoryEnabled = not not clothing_rules.shirt
 		default.AvatarClothingRules.CustomTShirtAccessoryEnabled = not not clothing_rules.tshirt
 		default.AvatarClothingRules.CustomSweaterAccessoryEnabled = not not clothing_rules.sweater
-		default.AvatarClothingRules.CustomDressSkirtAccessoryEnabled = not not clothing_rules.dressskirt
+		default.AvatarClothingRules.CustomDressSkirtAccessoryEnabled =
+			not not clothing_rules.dressskirt
 		default.AvatarClothingRules.CustomPantsAccessoryEnabled = not not clothing_rules.pants
 		default.AvatarClothingRules.CustomShortsAccessoryEnabled = not not clothing_rules.shorts
-		default.AvatarClothingRules.CustomLeftShoesAccessoryEnabled = not not clothing_rules.left_shoes
-		default.AvatarClothingRules.CustomRightShoesAccessoryEnabled = not not clothing_rules.right_shoes
+		default.AvatarClothingRules.CustomLeftShoesAccessoryEnabled =
+			not not clothing_rules.left_shoes
+		default.AvatarClothingRules.CustomRightShoesAccessoryEnabled =
+			not not clothing_rules.right_shoes
 
-		default.AvatarClothingRules.CustomClassicTShirtsAccessoryEnabled = not not clothing_rules.classic_tshirt
-		default.AvatarClothingRules.CustomClassicShirtsAccessoryEnabled = not not clothing_rules.classic_shirt
-		default.AvatarClothingRules.CustomClassicPantsAccessoryEnabled = not not clothing_rules.classic_pants
+		default.AvatarClothingRules.CustomClassicTShirtsAccessoryEnabled =
+			not not clothing_rules.classic_tshirt
+		default.AvatarClothingRules.CustomClassicShirtsAccessoryEnabled =
+			not not clothing_rules.classic_shirt
+		default.AvatarClothingRules.CustomClassicPantsAccessoryEnabled =
+			not not clothing_rules.classic_pants
 
 		default.AvatarClothingRules.CustomJacketAccessoryId = clothing_rules.jacket or 0
 		default.AvatarClothingRules.CustomShirtAccessoryId = clothing_rules.shirt or 0
@@ -207,9 +216,12 @@ const function to_engine_avatar_settings(experience: types.Experience): types.En
 		default.AvatarClothingRules.CustomLeftShoesAccessoryId = clothing_rules.left_shoes or 0
 		default.AvatarClothingRules.CustomRightShoesAccessoryId = clothing_rules.right_shoes or 0
 
-		default.AvatarClothingRules.CustomClassicTShirtsAccessoryId = clothing_rules.classic_tshirt or 0
-		default.AvatarClothingRules.CustomClassicShirtsAccessoryId = clothing_rules.classic_shirt or 0
-		default.AvatarClothingRules.CustomClassicPantsAccessoryId = clothing_rules.classic_pants or 0
+		default.AvatarClothingRules.CustomClassicTShirtsAccessoryId = clothing_rules.classic_tshirt
+			or 0
+		default.AvatarClothingRules.CustomClassicShirtsAccessoryId = clothing_rules.classic_shirt
+			or 0
+		default.AvatarClothingRules.CustomClassicPantsAccessoryId = clothing_rules.classic_pants
+			or 0
 
 		default.AvatarClothingRules.CustomClothingMode = if clothing_rules.jacket
 				or clothing_rules.shirt
@@ -246,7 +258,8 @@ const function to_engine_avatar_settings(experience: types.Experience): types.En
 		default.AvatarAccessoryRules.CustomHairAccessoryEnabled = not not accessory_rules.hair
 		default.AvatarAccessoryRules.CustomHeadAccessoryEnabled = not not accessory_rules.head
 		default.AvatarAccessoryRules.CustomNeckAccessoryEnabled = not not accessory_rules.neck
-		default.AvatarAccessoryRules.CustomShoulderAccessoryEnabled = not not accessory_rules.shoulder
+		default.AvatarAccessoryRules.CustomShoulderAccessoryEnabled =
+			not not accessory_rules.shoulder
 		default.AvatarAccessoryRules.CustomWaistAccessoryEnabled = not not accessory_rules.waist
 
 		default.AvatarAccessoryRules.CustomBackAccessoryId = accessory_rules.back or 0
@@ -258,7 +271,9 @@ const function to_engine_avatar_settings(experience: types.Experience): types.En
 		default.AvatarAccessoryRules.CustomShoulderAccessoryId = accessory_rules.shoulder or 0
 		default.AvatarAccessoryRules.CustomWaistAccessoryId = accessory_rules.waist or 0
 
-		default.AvatarAccessoryRules.LimitMethod = if accessory_rules.limit_method == "delete" then 1 else 0
+		default.AvatarAccessoryRules.LimitMethod = if accessory_rules.limit_method == "delete"
+			then 1
+			else 0
 		default.AvatarAccessoryRules.LimitBounds = if accessory_rules.limit_bounds
 			then accessory_rules.limit_bounds
 			else { 0, 0, 0 }
@@ -270,7 +285,8 @@ const function to_engine_avatar_settings(experience: types.Experience): types.En
 		elseif rules.collision_mode == "outerbox" then 0
 		elseif rules.collision_mode == "single_collider" then 1
 		else 0
-	default.AvatarCollisionRules.HitAndTouchDetectionMode = if rules.hit_and_touch_detection == "avatar_geometry"
+	default.AvatarCollisionRules.HitAndTouchDetectionMode = if rules.hit_and_touch_detection
+			== "avatar_geometry"
 		then 0
 		elseif rules.hit_and_touch_detection == "collider" then 1
 		else 0
@@ -280,13 +296,19 @@ const function to_engine_avatar_settings(experience: types.Experience): types.En
 
 	if body_rules == nil then
 	else
-		default.AvatarBodyRules.CustomBodyTypeScale = to_range(body_rules.limit_body_type_scale) or { 0, 1 }
+		default.AvatarBodyRules.CustomBodyTypeScale = to_range(body_rules.limit_body_type_scale)
+			or { 0, 1 }
 		default.AvatarBodyRules.CustomHeadScale = to_range(body_rules.limit_head_scale) or { 0, 1 }
-		default.AvatarBodyRules.CustomHeightScale = to_range(body_rules.limit_height_scale) or { 0, 1 }
-		default.AvatarBodyRules.CustomProportionsScale = to_range(body_rules.limit_proportions_scale) or { 0, 1 }
-		default.AvatarBodyRules.CustomWidthScale = to_range(body_rules.limit_width_scale) or { 0, 1 }
+		default.AvatarBodyRules.CustomHeightScale = to_range(body_rules.limit_height_scale)
+			or { 0, 1 }
+		default.AvatarBodyRules.CustomProportionsScale = to_range(
+			body_rules.limit_proportions_scale
+		) or { 0, 1 }
+		default.AvatarBodyRules.CustomWidthScale = to_range(body_rules.limit_width_scale)
+			or { 0, 1 }
 
-		default.AvatarBodyRules.CustomHeight = to_range(body_rules.forced_height_size) or { 5.5, 5.5 }
+		default.AvatarBodyRules.CustomHeight = to_range(body_rules.forced_height_size)
+			or { 5.5, 5.5 }
 		default.AvatarBodyRules.ScaleMode = if body_rules.forced_height_size then 1 else 0
 
 		default.AvatarBodyRules.AppearanceMode = if body_rules.allow_custom_bodyparts then 0 else 1

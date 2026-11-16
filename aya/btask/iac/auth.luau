@@ -47,7 +47,13 @@ function auth.update_roblox_cookie(new_cookie: string)
 	})
 
 	if response.ok == false then
-		print(styles.error(styles.header(`unable to update roblox cookie. not fatal, but manual intervention is required`)))
+		print(
+			styles.error(
+				styles.header(
+					`unable to update roblox cookie. not fatal, but manual intervention is required`
+				)
+			)
+		)
 		print(styles.error(`{response.status} {response.body}`))
 	else
 		print(styles.success(`{response.ok} updated roblox cookie!`))

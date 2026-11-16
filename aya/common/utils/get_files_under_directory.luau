@@ -1,7 +1,11 @@
 const fs = require("@std/fs")
 const path = require("@std/path")
 
-const function get_files_under_directory(directory: path.Path, only_files: boolean?, populate: { path.Path }?): { path.Path }
+const function get_files_under_directory(
+	directory: path.Path,
+	only_files: boolean?,
+	populate: { path.Path }?
+): { path.Path }
 	populate = if populate ~= nil then populate else {}
 
 	const contents = fs.listDirectory(directory)

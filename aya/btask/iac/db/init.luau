@@ -112,7 +112,11 @@ function db.use_experience_id(key: string, result: types.ExperienceResult)
 		const old_experience = results.experience_results[tostring(old_id)]
 
 		print(styles.detail(`marked old universe id {old_experience.universe_id} as unused`))
-		if old_experience and old_experience.universe_id and old_experience.universe_id ~= result.universe_id then
+		if
+			old_experience
+			and old_experience.universe_id
+			and old_experience.universe_id ~= result.universe_id
+		then
 			table.insert(results.unused_experiences, old_experience.universe_id :: number)
 		end
 	end
