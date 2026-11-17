@@ -19,15 +19,16 @@ const operators: { [string]: RangeOperators } = {
 	[">="] = ">=",
 }
 
-const semver_range = {}
+const semver_range = {
+	operators = operators,
+}
 
 function semver_range.parse(text: string): Identity
 	const length = if string.sub(text, 2, 2) == "=" then 2 else 1
 	const op = operators[string.sub(text, 1, length)]
 
 	return {
-		op = op
-			or error(`invalid range operator {string.sub(text, 1, length)} in semver range {text}`),
+		op = op or error(`invalid range operator "{string.sub(text, 1, length)}" in "{text}"`),
 
 		version = semver.parse(string.sub(text, length + 1)),
 	}

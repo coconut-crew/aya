@@ -14,7 +14,7 @@ const reasons: { [ExitCode]: ExitReason } = {
 	["MANIFEST_PARSING_FAILED"] = {
 		code = 1,
 		explanation = {
-			`Failed to parse manifest at {styles.keyword("%*")}\n\t%*.`,
+			`Manifest {styles.keyword("%*")} failed to parse: %*.`,
 		},
 	},
 

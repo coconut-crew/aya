@@ -1,31 +1,48 @@
+const path = require("@std/path")
 const pkg_id = require("@aya/pkg/pkg_id")
+const provider_tys = require("@aya/pkg/provider/provider_tys")
 const semver = require("@aya/pkg/utils/semver")
-const semver_range = require("@aya/pkg/utils/semver_range")
 
-export type Registry = {
-	-- global name: { [version]: { dependency list } }
-	[pkg_id.GlobalName]: { [string]: { [pkg_id.GlobalName]: semver_range.Identity } },
+export type FakeSourceInfo = {
+	type: "fake",
+	name: string,
 }
 
 const fake = {
-	registry = {} :: Registry,
+	registry = {} :: provider_tys.Registry,
 }
 
-function fake.download_async(global_name: pkg_id.GlobalName, version: semver.Identity) end
+function fake.provider(): provider_tys.SourceProvider<nil>
+	const provider: provider_tys.SourceProvider<nil> = {} :: never
 
-function fake.dependencies_of_async(global_name: pkg_id.GlobalName, version: semver.Identity)
-	return fake.registry[global_name][semver.print(version)]
-end
-
-function fake.get_versions_async(global_name: pkg_id.GlobalName): { semver.Identity }
-	const result = {}
-
-	const version_list = fake.registry[global_name]
-	for version_string in version_list do
-		table.insert(result, semver.parse(version_string))
+	function provider.download_async(
+		global_name: pkg_id.GlobalName,
+		version: semver.Identity,
+		at: path.Pathlike
+	)
 	end
 
-	return result
+	function provider.get_dependencies_async(
+		global_name: pkg_id.GlobalName,
+		version: semver.Identity
+	)
+		return fake.registry[global_name][semver.print(version)]
+	end
+
+	function provider.get_versions_async(global_name: pkg_id.GlobalName): { semver.Identity }
+		const result = {}
+
+		const version_list = fake.registry[global_name]
+		for version_string in version_list do
+			table.insert(result, semver.parse(version_string))
+		end
+
+		table.sort(result, semver.newer)
+
+		return result
+	end
+
+	return provider
 end
 
 return fake

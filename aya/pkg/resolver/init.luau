@@ -40,13 +40,6 @@ const function slot_of(name: pkg_id.GlobalName, version: semver.Identity): strin
 	return `{name}@{semver.compat_key(version)}`
 end
 
-const function versions_of(name: pkg_id.GlobalName): { semver.Identity }
-	assert(provider.source_for(name), `unknown package '{name}': no source registered`)
-	const versions = table.clone(provider.get_versions_async(name))
-	table.sort(versions, semver.newer)
-	return versions
-end
-
 const function satisfies_all(version: semver.Identity, requirements: { Requirement }): boolean
 	for _, requirement in requirements do
 		if not version_set.contains(version_set.from_range(requirement.range), version) then
@@ -60,7 +53,7 @@ end
 const function find_candidates(requirements: { Requirement }): { PackageVersion }
 	const name = requirements[1].name
 	const result: { PackageVersion } = {}
-	for _, version in versions_of(name) do
+	for _, version in provider.get_versions_async(name) do
 		if satisfies_all(version, requirements) then
 			table.insert(result, { name = name, version = version })
 		end
@@ -71,7 +64,7 @@ end
 
 const function find_slot(name: pkg_id.GlobalName, range: semver_range.Identity): string
 	const allowed = version_set.from_range(range)
-	for _, version in versions_of(name) do
+	for _, version in provider.get_versions_async(name) do
 		if version_set.contains(allowed, version) then
 			return slot_of(name, version)
 		end
@@ -204,7 +197,7 @@ function resolver.solve(roots: Ranges, locked: { [pkg_id.Identifier]: true }?): 
 
 		frame.index += 1
 		const candidate = frame.candidates[frame.index]
-		const dependencies = provider.dependencies_of_async(candidate.name, candidate.version)
+		const dependencies = provider.get_dependencies_async(candidate.name, candidate.version)
 		const required_by = pkg_id.identifier(candidate.name, candidate.version)
 
 		selected = table.clone(frame.selected)
