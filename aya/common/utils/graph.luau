@@ -169,19 +169,25 @@ const function edge_del(index: Index, id: i53)
 end
 
 type _rawget<T, U> = rawget<T, U>
+-- UDTF perf
+type _nil = nil
+-- UDTF perf
+type _node = "__NODE"
+-- UDTF perf
+type _edge = "__EDGE"
 type function Get(ty)
-	const node_ty = _rawget(ty, types.singleton("__NODE"))
-	if node_ty == types.singleton(nil) then
-		const edge_ty = _rawget(ty, types.singleton("__EDGE"))
-		if edge_ty == types.singleton(nil) then
-			print("Cannot get a non-ID")
-			return types.never
-		end
-
-		return edge_ty
+	const node_ty = _rawget(ty, _node)
+	if node_ty ~= _nil then
+        return node_ty
 	end
 
-	return node_ty
+    const edge_ty = _rawget(ty, _edge)
+	if edge_ty == _nil then
+		print("Cannot get a non-ID")
+		return types.never
+	end
+
+	return edge_ty
 end
 
 const graph = {}
