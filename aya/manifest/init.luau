@@ -2,9 +2,9 @@ const exit = require("@aya/common/exit")
 const fs = require("@std/fs")
 const log = require("@aya/common/log")
 const path = require("@std/path")
-const pkg_id = require("@aya/pkg/pkg_id")
+const pkg_id = require("@aya/pkg/utils/pkg_id")
 const pretty_print = require("@aya/common/utils/pretty_print")
-const provider = require("@aya/pkg/provider")
+const provider_tys = require("@aya/pkg/provider/provider_tys")
 const semver_range = require("@aya/pkg/utils/semver_range")
 const toml = require("@vendor/toml")
 
@@ -13,7 +13,7 @@ const CONFIG_FILE_NAME = ".aya.toml"
 type DependencyEntry = {
 	global_name: pkg_id.GlobalName,
 	version: semver_range.Identity,
-	source: provider.SourceInfo,
+	source: provider_tys.SourceInfo,
 }
 
 type RawDepEntry =

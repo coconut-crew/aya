@@ -32,8 +32,8 @@ const function use_registry(spec: { [string]: { [string]: { [string]: string } }
 	end
 end
 
-const function version_in(resolution: resolver.Resolution, slot: string): string?
-	const selected = resolution[slot]
+const function version_in(resolution: resolver.Resolution, name: string): string?
+	const selected = resolution[name]
 	return if selected then semver.print(selected.version) else nil
 end
 
@@ -44,6 +44,9 @@ const function solve_error(roots: resolver.Ranges): string
 end
 
 test.suite("resolver.solve", function(suite)
+	suite:beforeAll(function()
+		provider.init()
+	end)
 	suite:case("selects the newest version satisfying the root requirement", function(t)
 		use_registry({
 			a = { ["2.0.0"] = {}, ["1.3.0"] = {}, ["1.0.0"] = {} },
@@ -51,7 +54,7 @@ test.suite("resolver.solve", function(suite)
 
 		const resolution = resolver.solve(ranges({ a = "^1.0.0" }))
 
-		t.eq(version_in(resolution, "a@1"), "1.3.0")
+		t.eq(version_in(resolution, "a"), "1.3.0")
 	end)
 
 	suite:case("resolves transitive dependencies", function(t)
@@ -63,42 +66,43 @@ test.suite("resolver.solve", function(suite)
 
 		const resolution = resolver.solve(ranges({ a = "^1.0.0" }))
 
-		t.eq(version_in(resolution, "b@1"), "1.1.0")
-		t.eq(version_in(resolution, "c@0.2"), "0.2.5")
+		t.eq(version_in(resolution, "b"), "1.1.0")
+		t.eq(version_in(resolution, "c"), "0.2.5")
 	end)
 
-	suite:case("keeps incompatible versions of one package in separate slots", function(t)
+	suite:case("rejects two major versions of one package", function(t)
 		use_registry({
 			a = { ["1.0.0"] = { b = "^2.0.0" } },
 			b = { ["2.1.0"] = {}, ["1.4.0"] = {} },
 		})
 
-		const resolution = resolver.solve(ranges({ a = "^1.0.0", b = "^1.0.0" }))
+		const message = solve_error(ranges({ a = "^1.0.0", b = "^1.0.0" }))
 
-		t.eq(version_in(resolution, "b@1"), "1.4.0")
-		t.eq(version_in(resolution, "b@2"), "2.1.0")
+		t.strContains(message, "version conflict for 'b'")
+		t.strContains(message, "^1.0.0  (required by root)")
+		t.strContains(message, "^2.0.0  (required by a@1.0.0)")
 	end)
 
-	suite:case("slots 0.x versions by minor, including 0.0.x", function(t)
+	suite:case("rejects two 0.x minor versions of one package", function(t)
 		use_registry({
-			a = { ["0.3.4"] = {} },
-			b = { ["0.0.7"] = {}, ["0.0.3"] = {} },
+			a = { ["1.0.0"] = { b = "^0.4.0" } },
+			b = { ["0.4.1"] = {}, ["0.3.2"] = {} },
 		})
 
-		const resolution = resolver.solve(ranges({ a = "^0.3.0", b = "^0.0.3" }))
+		const message = solve_error(ranges({ a = "^1.0.0", b = "^0.3.0" }))
 
-		t.eq(version_in(resolution, "a@0.3"), "0.3.4")
-		t.eq(version_in(resolution, "b@0.0"), "0.0.7")
+		t.strContains(message, "version conflict for 'b'")
 	end)
 
-	suite:case("slots an open range by the newest version satisfying it", function(t)
+	suite:case("narrows an open range by a caret range on the same package", function(t)
 		use_registry({
 			a = { ["2.1.0"] = {}, ["1.0.0"] = {} },
+			b = { ["1.0.0"] = { a = "^1.0.0" } },
 		})
 
-		const resolution = resolver.solve(ranges({ a = ">=1.0.0" }))
+		const resolution = resolver.solve(ranges({ a = ">=1.0.0", b = "^1.0.0" }))
 
-		t.eq(version_in(resolution, "a@2"), "2.1.0")
+		t.eq(version_in(resolution, "a"), "1.0.0")
 	end)
 
 	suite:case(
@@ -111,8 +115,8 @@ test.suite("resolver.solve", function(suite)
 
 			const resolution = resolver.solve(ranges({ a = "^1.0.0", c = "^1.1.0" }))
 
-			t.eq(version_in(resolution, "a@1"), "1.0.0")
-			t.eq(version_in(resolution, "c@1"), "1.2.0")
+			t.eq(version_in(resolution, "a"), "1.0.0")
+			t.eq(version_in(resolution, "c"), "1.2.0")
 		end
 	)
 
@@ -129,8 +133,8 @@ test.suite("resolver.solve", function(suite)
 
 		const resolution = resolver.solve(ranges({ a = "^1.0.0", b = "^1.0.0" }))
 
-		t.eq(version_in(resolution, "a@1"), "1.0.0")
-		t.eq(version_in(resolution, "b@1"), "1.2.0")
+		t.eq(version_in(resolution, "a"), "1.0.0")
+		t.eq(version_in(resolution, "b"), "1.2.0")
 	end)
 
 	suite:case("prefers the locked version over newer satisfying versions", function(t)
@@ -140,7 +144,7 @@ test.suite("resolver.solve", function(suite)
 
 		const resolution = resolver.solve(ranges({ a = "^1.0.0" }), { ["a@1.1.0"] = true })
 
-		t.eq(version_in(resolution, "a@1"), "1.1.0")
+		t.eq(version_in(resolution, "a"), "1.1.0")
 	end)
 
 	suite:case("ignores a locked version outside the required range", function(t)
@@ -150,7 +154,7 @@ test.suite("resolver.solve", function(suite)
 
 		const resolution = resolver.solve(ranges({ a = "^1.0.0" }), { ["a@2.0.0"] = true })
 
-		t.eq(version_in(resolution, "a@1"), "1.2.0")
+		t.eq(version_in(resolution, "a"), "1.2.0")
 	end)
 
 	suite:case("rejects a requirement on a package with no registered source", function(t)

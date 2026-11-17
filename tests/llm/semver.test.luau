@@ -116,36 +116,3 @@ test.suite("semver.compatible", function(suite)
 		t.that(semver.compatible(version(0, 3, 1), version(0, 3, 4)))
 	end)
 end)
-
-test.suite("semver.compat_key", function(suite)
-	suite:case("uses the major version once major is at least 1", function(t)
-		t.eq(semver.compat_key(version(1, 7, 3)), "1")
-		t.eq(semver.compat_key(version(12, 0, 0)), "12")
-	end)
-
-	suite:case("uses the minor version when major is 0", function(t)
-		t.eq(semver.compat_key(version(0, 3, 9)), "0.3")
-	end)
-
-	suite:case("gives two versions the same key exactly when they are compatible", function(t)
-		const versions = {
-			version(1, 0, 0),
-			version(1, 9, 2),
-			version(2, 0, 0),
-			version(0, 3, 0),
-			version(0, 3, 7),
-			version(0, 4, 0),
-		}
-
-		for _, left in versions do
-			for _, right in versions do
-				const same_key = semver.compat_key(left) == semver.compat_key(right)
-				t.eq(
-					same_key,
-					semver.compatible(left, right),
-					`{semver.print(left)} vs {semver.print(right)}`
-				)
-			end
-		end
-	end)
-end)

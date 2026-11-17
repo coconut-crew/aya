@@ -136,17 +136,6 @@ function semver.compatible(left: Identity, right: Identity): boolean
 end
 
 --[[
-	returns things like "1", "2", "0.3", whatever
-]]
-function semver.compat_key(version: Identity): string
-	if version.major == 0 then
-		return `0.{version.minor}`
-	else
-		return tostring(version.major)
-	end
-end
-
---[[
 	returns negative if older, positive if newer,
 	and zero if equivalent
 ]]

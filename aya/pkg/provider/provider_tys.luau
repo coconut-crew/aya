@@ -3,6 +3,13 @@ const pkg_id = require("@aya/pkg/utils/pkg_id")
 const semver = require("@aya/pkg/utils/semver")
 const semver_range = require("@aya/pkg/utils/semver_range")
 
+export type GitSourceInfo = {
+	type: "git",
+	remote: string,
+}
+
+export type SourceInfo = GitSourceInfo
+
 export type SourceProvider<T> = {
 	get_versions_async: (global_name: pkg_id.GlobalName) -> { semver.Identity },
 	get_dependencies_async: (
