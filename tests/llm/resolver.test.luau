@@ -34,7 +34,7 @@ end
 
 const function version_in(resolution: resolver.Resolution, name: string): string?
 	const selected = resolution[name]
-	return if selected then semver.print(selected.version) else nil
+	return if selected then semver.print(selected) else nil
 end
 
 const function solve_error(roots: resolver.Ranges): string

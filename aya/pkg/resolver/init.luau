@@ -1,6 +1,5 @@
 --[[
 	Heavily modified version of Lute's solver which looks eerily similar to Cargo's solver
-
 	todo put license here
 ]]
 
@@ -12,13 +11,7 @@ const version_set = require("@aya/pkg/utils/version_set")
 
 export type Ranges = { [pkg_id.GlobalName]: semver_range.Identity }
 
-export type PackageVersion = {
-	name: pkg_id.GlobalName,
-	version: semver.Identity,
-}
-
--- only one version of a package can be selected
-export type Resolution = { [pkg_id.GlobalName]: PackageVersion }
+export type Resolution = { [pkg_id.GlobalName]: semver.Identity }
 
 type Requirement = {
 	range: semver_range.Identity,
@@ -29,7 +22,7 @@ type ConstraintSet = { [pkg_id.GlobalName]: { Requirement } }
 
 type DecisionFrame = {
 	name: pkg_id.GlobalName,
-	candidates: { PackageVersion },
+	candidates: { semver.Identity },
 	index: number,
 	constraints: ConstraintSet,
 	selected: Resolution,
@@ -48,11 +41,11 @@ end
 const function find_candidates(
 	name: pkg_id.GlobalName,
 	requirements: { Requirement }
-): { PackageVersion }
-	const result: { PackageVersion } = {}
+): { semver.Identity }
+	const result: { semver.Identity } = {}
 	for _, version in provider.get_versions_async(name) do
 		if satisfies_all(version, requirements) then
-			table.insert(result, { name = name, version = version })
+			table.insert(result, version)
 		end
 	end
 
@@ -76,8 +69,8 @@ end
 
 const function find_invalid_package(set: ConstraintSet, selected: Resolution): pkg_id.GlobalName?
 	local invalid: pkg_id.GlobalName? = nil
-	for name, package in selected do
-		if satisfies_all(package.version, set[name]) then
+	for name, version in selected do
+		if satisfies_all(version, set[name]) then
 			continue
 		end
 
@@ -110,12 +103,15 @@ const function pick_pending(set: ConstraintSet, selected: Resolution): pkg_id.Gl
 	return best
 end
 
--- { [identifier]: is locked }
-const function prefer_locked(candidates: { PackageVersion }, locked: { [pkg_id.Identifier]: true })
-	for index, candidate in candidates do
-		if locked[pkg_id.identifier(candidate.name, candidate.version)] then
+const function prefer_locked(
+	name: pkg_id.GlobalName,
+	candidates: { semver.Identity },
+	locked: { [pkg_id.Identifier]: true }
+)
+	for index, candidate_version in candidates do
+		if locked[pkg_id.identifier(name, candidate_version)] then
 			table.remove(candidates, index)
-			table.insert(candidates, 1, candidate)
+			table.insert(candidates, 1, candidate_version)
 			return
 		end
 	end
@@ -143,7 +139,6 @@ function resolver.solve(roots: Ranges, locked: { [pkg_id.Identifier]: true }?): 
 	local stuck: { name: pkg_id.GlobalName, requirements: { Requirement }, depth: number }? = nil
 
 	while true do
-		-- an invalidated selection gets no candidates so it backtracks like any other dead end
 		const invalid_name = find_invalid_package(constraints, selected)
 		const name = invalid_name or pick_pending(constraints, selected)
 		if name == nil then
@@ -153,7 +148,7 @@ function resolver.solve(roots: Ranges, locked: { [pkg_id.Identifier]: true }?): 
 		const requirements = constraints[name]
 		const candidates = if invalid_name then {} else find_candidates(name, requirements)
 		if locked then
-			prefer_locked(candidates, locked)
+			prefer_locked(name, candidates, locked)
 		end
 
 		if #candidates > 0 then
@@ -164,26 +159,27 @@ function resolver.solve(roots: Ranges, locked: { [pkg_id.Identifier]: true }?): 
 				constraints = constraints,
 				selected = selected,
 			})
-		else
-			if stuck == nil or #stack < stuck.depth then
-				stuck = { name = name, requirements = requirements, depth = #stack }
-			end
-
-			while #stack > 0 and stack[#stack].index == #stack[#stack].candidates do
-				table.remove(stack)
-			end
+		elseif stuck == nil or #stack < stuck.depth then
+			stuck = { name = name, requirements = requirements, depth = #stack }
 		end
 
-		const frame = stack[#stack]
+		local stack_len = #stack
+		while stack_len > 0 and stack[stack_len].index == #stack[stack_len].candidates do
+			table.remove(stack)
+			stack_len -= 1
+		end
+
+		const frame = stack[stack_len]
 		if frame == nil then
 			assert(stuck, "luau")
 			error(describe_conflict(stuck.name, stuck.requirements))
 		end
 
 		frame.index += 1
+
 		const candidate = frame.candidates[frame.index]
-		const dependencies = provider.get_dependencies_async(candidate.name, candidate.version)
-		const required_by = pkg_id.identifier(candidate.name, candidate.version)
+		const dependencies = provider.get_dependencies_async(frame.name, candidate)
+		const required_by = pkg_id.identifier(frame.name, candidate)
 
 		selected = table.clone(frame.selected)
 		selected[frame.name] = candidate
