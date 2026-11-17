@@ -177,17 +177,17 @@ type _node = "__NODE"
 type _edge = "__EDGE"
 type function Get(ty)
 	const node_ty = _rawget(ty, _node)
-	if node_ty == _nil then
-		const edge_ty = _rawget(ty, _edge)
-		if edge_ty == _nil then
-			print("Cannot get a non-ID")
-			return types.never
-		end
-
-		return edge_ty
+	if node_ty ~= _nil then
+        return node_ty
 	end
 
-	return node_ty
+    const edge_ty = _rawget(ty, _edge)
+	if edge_ty == _nil then
+		print("Cannot get a non-ID")
+		return types.never
+	end
+
+	return edge_ty
 end
 
 const graph = {}
