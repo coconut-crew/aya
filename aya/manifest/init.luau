@@ -70,21 +70,23 @@ function manifest.parse(str_content: string): Identity
 
 	log.trace("got toml, converting into internal format")
 
-	const raw_dependencies = raw_table_representation.dependencies
-	assert(type(raw_dependencies) == "table", "the dependencies entry must be a table")
-
 	const manifest_contents: Identity = {
 		dependencies = {},
 	}
 
-	for dependency, data in raw_dependencies do
-		const parsed = parse_raw_dependency(dependency, data)
+	const raw_dependencies = raw_table_representation.dependencies
+	if raw_dependencies ~= nil then
+		assert(type(raw_dependencies) == "table", "the dependencies entry must be a table")
 
-		manifest_contents.dependencies[dependency] = parsed
+		for dependency, data in raw_dependencies do
+			const parsed = parse_raw_dependency(dependency, data)
 
-		log.trace(
-			`\tparsed dep [{dependency}]: v{semver_range.print(parsed.version)}, src type: {parsed.source.type}`
-		)
+			manifest_contents.dependencies[pkg_id.global_name(dependency)] = parsed
+
+			log.trace(
+				`\tparsed dep [{dependency}]: v{semver_range.print(parsed.version)}, src type: {parsed.source.type}`
+			)
+		end
 	end
 
 	log.trace("dependencies in, moving onto crates")
@@ -119,7 +121,5 @@ function manifest.find_closest_config(location: path.Pathlike): path.Pathlike?
 
 	return nil
 end
-
-manifest.read_from(".aya.toml")
 
 return table.freeze(manifest)

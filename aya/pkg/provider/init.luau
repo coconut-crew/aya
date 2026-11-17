@@ -6,7 +6,7 @@ const provider_tys = require("@aya/pkg/provider/provider_tys")
 const semver = require("@aya/pkg/utils/semver")
 const semver_range = require("@aya/pkg/utils/semver_range")
 
-export type SourceInfo = git.GitSourceInfo | fake.FakeSourceInfo
+export type SourceInfo = git.GitSourceInfo
 
 const prov_list: { [("git" | "fake")]: provider_tys.SourceProvider<any> } = {
 	git = git.provider(),

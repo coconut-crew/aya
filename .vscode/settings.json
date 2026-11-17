@@ -5,7 +5,8 @@
 		"**/_Index/**",
 		"build/**",
 		"vendor/**",
-		"**/index/**"
+		"**/index/**",
+		"**/tests/**"
 	],
 
 	"luau-lsp.completion.imports.useConst": true,

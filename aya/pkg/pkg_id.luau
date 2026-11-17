@@ -1,8 +1,5 @@
 const semver = require("@aya/pkg/utils/semver")
 
-export type SourceId = string
-export type SourceKind = "git"
-
 -- Since names are globally namespaced, a package's name is unique to that package.
 -- Package names are also case insensitive.
 export type GlobalName = string
@@ -62,14 +59,6 @@ end
 
 function pkg_id.git_source(name: string, version: semver.Identity, remote: string): SourceId
 	return `git+{name}+version:{semver.print(version)}+{canonicalize_remote(remote)}`
-end
-
-function pkg_id.source_kind(source_id: SourceId): SourceKind
-	if string.sub(source_id, 1, 3) == "git" then
-		return "git"
-	else
-		error(`invalid id {source_id}`)
-	end
 end
 
 return table.freeze(pkg_id)
