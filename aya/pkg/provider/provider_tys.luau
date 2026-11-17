@@ -1,5 +1,5 @@
 const path = require("@std/path")
-const pkg_id = require("@aya/pkg/pkg_id")
+const pkg_id = require("@aya/pkg/utils/pkg_id")
 const semver = require("@aya/pkg/utils/semver")
 const semver_range = require("@aya/pkg/utils/semver_range")
 

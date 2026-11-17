@@ -1,12 +1,3 @@
-const semver = require("@aya/pkg/utils/semver")
-
--- Since names are globally namespaced, a package's name is unique to that package.
--- Package names are also case insensitive.
-export type GlobalName = string
-
--- GlobalName + Version
-export type Identifier = string
-
 const SLASH = string.byte("/")
 
 --[[
@@ -45,20 +36,4 @@ const function canonicalize_remote(remote: string): string
 	return `{scheme}://{userinfo}{host}{url_path}`
 end
 
-const pkg_id = {}
-
--- we might want to do something interesting with this later
--- for now its just making things case insensitive
-function pkg_id.global_name(name: string): GlobalName
-	return string.lower(name)
-end
-
-function pkg_id.identifier(name: string, version: semver.Identity): Identifier
-	return `{pkg_id.global_name(name)}@{semver.print(version)}`
-end
-
-function pkg_id.git_source(name: string, version: semver.Identity, remote: string): SourceId
-	return `git+{name}+version:{semver.print(version)}+{canonicalize_remote(remote)}`
-end
-
-return table.freeze(pkg_id)
+return canonicalize_remote
