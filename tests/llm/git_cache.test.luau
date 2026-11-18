@@ -46,6 +46,25 @@ test.suite("git_cache.parse_ls_remote", function(suite)
 	end)
 end)
 
+test.suite("git_cache.parse_ref_lookup", function(suite)
+	suite:case("returns the commit a branch points at", function(t)
+		t.eq(git_cache.parse_ref_lookup(ls_remote_output({ "commit\trefs/heads/main" })), "commit")
+	end)
+
+	suite:case("prefers the peeled commit of an annotated tag", function(t)
+		const revision = git_cache.parse_ref_lookup(ls_remote_output({
+			"tag_object\trefs/tags/v1.0.0",
+			"commit\trefs/tags/v1.0.0^{}",
+		}))
+
+		t.eq(revision, "commit")
+	end)
+
+	suite:case("returns nothing when the ref does not exist", function(t)
+		t.eq(git_cache.parse_ref_lookup(""), nil)
+	end)
+end)
+
 test.suite("git_cache.remote_cache_key", function(suite)
 	suite:case("gives the same key to urls for the same github repository", function(t)
 		const key = git_cache.remote_cache_key("https://github.com/ffrostfall/bytenet.git")

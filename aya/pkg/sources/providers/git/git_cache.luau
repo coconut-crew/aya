@@ -3,7 +3,6 @@ const canonicalize_remote = require("@aya/pkg/utils/canonicalize_remote")
 const crypto = require("@lute/crypto")
 const manifest = require("@aya/manifest")
 const net = require("@std/net")
-const pkg_id = require("@aya/pkg/utils/pkg_id")
 const process = require("@std/process")
 const semver = require("@aya/pkg/utils/semver")
 const to_hex = require("@aya/common/utils/to_hex")
@@ -53,6 +52,61 @@ const function remote_ls_tags(remote: string): VersionRevisionMap
 
 	return parse_ls_remote(res.stdout)
 end
+
+--[[
+	AI generated implementations:
+	i hate working with git so much.
+]]
+
+-- picks the commit out of `git ls-remote` output for one branch or tag
+const function parse_ref_lookup(content: string): string?
+	local found: string? = nil
+	for _, line in string.split(content, "\n") do
+		const revision, ref = table.unpack(string.split(line, "\t"))
+		if not (revision and ref) then
+			continue
+		end
+
+		-- an annotated tag points at a tag object, its peeled entry points at the commit
+		if string.sub(ref, -3) == "^{}" then
+			return revision
+		end
+
+		found = found or revision
+	end
+
+	return found
+end
+
+const function is_commit_hash(rev: string): boolean
+	return #rev == 40 and string.find(rev, "^%x+$") ~= nil
+end
+
+const function resolve_rev(remote: string, rev: string): string
+	if is_commit_hash(rev) then
+		return rev
+	end
+
+	const res = process.run({
+		"git",
+		"ls-remote",
+		"--",
+		remote,
+		`refs/heads/{rev}`,
+		`refs/tags/{rev}`,
+		`refs/tags/{rev}^\{}`,
+	})
+	assert(res.ok, `process failed with exit code {res.exitcode}:\n{res.stderr}`)
+
+	const revision = parse_ref_lookup(res.stdout)
+	assert(revision, `{remote} has no branch or tag named {rev}, pin a commit with its full hash`)
+
+	return revision
+end
+
+--[[
+	End AI generated implementations
+]]
 
 const function remote_cache_key(remote: string): string
 	const out = crypto.digest(crypto.hash.md5, canonicalize_remote(remote))
@@ -184,15 +238,12 @@ function git_cache.get_versions_async(self: Identity, remote: string): { semver.
 	return versions
 end
 
-function git_cache.get_dependencies_async(
+function git_cache.get_manifest_async(
 	self: Identity,
 	remote: string,
-	version: semver.Identity
-): { [pkg_id.GlobalName]: manifest.DependencyEntry }
-	const revision = self:get_revision_async(remote, version)
-	const manifest_contents = read_manifest_async(self.manifest_cache, remote, revision)
-
-	return manifest.parse(manifest_contents).dependencies
+	revision: string
+): manifest.Identity
+	return manifest.parse(read_manifest_async(self.manifest_cache, remote, revision))
 end
 
 table.freeze(git_cache)
@@ -202,4 +253,6 @@ return table.freeze({
 	remote_cache_key = remote_cache_key,
 	remote_ls_tags = remote_ls_tags,
 	parse_ls_remote = parse_ls_remote,
+	parse_ref_lookup = parse_ref_lookup,
+	resolve_rev = resolve_rev,
 })

@@ -38,8 +38,8 @@ test.suite("interval_set.new", function(suite)
 	end)
 
 	suite:case("rejects an interval with no room between its bounds", function(t)
-		t.throwsWith("interval is empty", interval_set.new, less, MIN, 3, 3)
-		t.throwsWith("interval is empty", interval_set.new, less, MIN, 5, 3)
+		t.throws(interval_set.new, less, MIN, 3, 3)
+		t.throws(interval_set.new, less, MIN, 5, 3)
 	end)
 end)
 

@@ -21,6 +21,9 @@ const operators: { [string]: RangeOperators } = {
 
 const semver_range = {
 	operators = operators,
+
+	-- matches every version, prereleases included
+	any = table.freeze({ op = ">=", version = semver.zero }) :: Identity,
 }
 
 function semver_range.parse(text: string): Identity
@@ -47,6 +50,10 @@ function semver_range.prerelease_allowed(range: Identity, version: semver.Identi
 end
 
 function semver_range.print(range: Identity): string
+	if range == semver_range.any then
+		return "*"
+	end
+
 	return `{range.op}{semver.print(range.version)}`
 end
 

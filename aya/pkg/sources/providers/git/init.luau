@@ -9,6 +9,12 @@ const source_info = require("@aya/pkg/sources/source_info")
 return create_provider(function(sources): create_provider.Impl<source_info.Git>
 	const cache = git_cache.new()
 
+	const function get_revision(src: source_info.Git, version: semver.Identity): string
+		return if src.rev
+			then git_cache.resolve_rev(src.remote, src.rev)
+			else cache:get_revision_async(src.remote, version)
+	end
+
 	return {
 		download_async = function(
 			name: pkg_id.GlobalName,
@@ -18,7 +24,7 @@ return create_provider(function(sources): create_provider.Impl<source_info.Git>
 			const src = sources[name]
 			assert(src.type == "git")
 
-			git_download.download(src.remote, cache:get_revision_async(src.remote, version), at)
+			git_download.download(src.remote, get_revision(src, version), at)
 		end,
 
 		get_dependencies_async = function(
@@ -28,8 +34,11 @@ return create_provider(function(sources): create_provider.Impl<source_info.Git>
 			const src = sources[name]
 			assert(src.type == "git")
 
+			const manifest_contents =
+				cache:get_manifest_async(src.remote, get_revision(src, version))
+
 			const dependencies: create_provider.DependencySet = {}
-			for dependency_name, entry in cache:get_dependencies_async(src.remote, version) do
+			for dependency_name, entry in manifest_contents.dependencies do
 				dependencies[dependency_name] = entry.version
 
 				if not sources[dependency_name] then
@@ -44,7 +53,15 @@ return create_provider(function(sources): create_provider.Impl<source_info.Git>
 			const src = sources[name]
 			assert(src.type == "git")
 
-			return (cache:get_versions_async(src.remote))
+			const rev = src.rev
+			if rev == nil then
+				return (cache:get_versions_async(src.remote))
+			end
+
+			const revision = git_cache.resolve_rev(src.remote, rev)
+			sources[name] = { type = "git", remote = src.remote, rev = revision }
+
+			return { cache:get_manifest_async(src.remote, revision).version }
 		end,
 	}
 end)

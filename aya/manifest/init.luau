@@ -1,14 +1,11 @@
-const exit = require("@aya/common/exit")
 const fs = require("@std/fs")
 const log = require("@aya/common/log")
 const path = require("@std/path")
 const pkg_id = require("@aya/pkg/utils/pkg_id")
-const pretty_print = require("@aya/common/utils/pretty_print")
+const semver = require("@aya/pkg/utils/semver")
 const semver_range = require("@aya/pkg/utils/semver_range")
 const source_info = require("@aya/pkg/sources/source_info")
 const toml = require("@vendor/toml")
-
-const CONFIG_FILE_NAME = ".aya.toml"
 
 export type DependencyEntry = {
 	global_name: pkg_id.GlobalName,
@@ -19,48 +16,58 @@ export type DependencyEntry = {
 type RawDepEntry =
 	{
 		version: string,
-		github: nil,
+		github: string,
+		rev: nil,
 	}
 	| {
-		version: string,
 		github: string,
+		rev: string,
+		version: nil,
 	}
 
 type RawTableRepresentation = {
+	package: { version: string? }?,
 	dependencies: {
 		[string]: RawDepEntry,
 	},
 }
 
 export type Identity = {
+	version: semver.Identity,
+
 	dependencies: { [pkg_id.GlobalName]: DependencyEntry },
 }
+
+const CONFIG_FILE_NAME = ".aya.toml"
+
+--[[
+	we want implicit ^
+]]
+const function version_with_default_caret(text: string): semver_range.Identity
+	if semver_range.operators[string.sub(text, 1, 1)] then
+		return semver_range.parse(text)
+	end
+
+	return semver_range.parse("^" .. text)
+end
 
 const manifest = {}
 
 function manifest.parse_raw_dependency(raw_name: string, raw: RawDepEntry): DependencyEntry
 	const global_name = pkg_id.global_name(raw_name)
+	assert(raw.github, "non-github dependencies are unsupported at this time")
+	assert(raw.version or raw.rev, `{global_name}: no version or revision`)
 
-	local version_string = raw.version
-	if not semver_range.operators[string.sub(raw.version, 1, 1)] then
-		version_string = "^" .. raw.version
-	end
+	return {
+		global_name = global_name,
+		version = if raw.version then version_with_default_caret(raw.version) else semver_range.any,
 
-	const version = semver_range.parse(version_string)
-
-	if raw.github then
-		return {
-			global_name = global_name,
-			version = version,
-
-			source = {
-				type = "git",
-				remote = `https://github.com/{raw.github}/{global_name}.git`,
-			},
-		}
-	else
-		error("non-github dependencies are unsupported at this time")
-	end
+		source = {
+			type = "git",
+			remote = `https://github.com/{raw.github}/{global_name}.git`,
+			rev = raw.rev,
+		},
+	}
 end
 
 function manifest.parse(str_content: string): Identity
@@ -70,7 +77,11 @@ function manifest.parse(str_content: string): Identity
 
 	log.trace("got toml, converting into internal format")
 
+	const raw_package = raw_table_representation.package
+	const raw_version = raw_package and raw_package.version
+
 	const manifest_contents: Identity = {
+		version = if raw_version then semver.parse(raw_version) else semver.parse("0.0.0"),
 		dependencies = {},
 	}
 

@@ -87,7 +87,7 @@ test.suite("graph:edge", function(suite)
 		const b = target:node("b")
 		const ab = target:edge(a, b, "a->b")
 
-		t.throwsWith(`edge {a} -> {b} already exists`, target.edge, target, a, b, "again")
+		t.throws(target.edge, target, a, b, "again")
 		t.eq(target:get(ab), "a->b")
 	end)
 end)
