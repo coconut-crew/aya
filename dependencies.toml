@@ -26,3 +26,9 @@ remote = "https://github.com/coconut-crew/colorful"
 branch = "main"
 commit = "e62cce1b27b267c90a041314338c784b548044c5"
 entry_point = "src/init.luau"
+
+[levenshtein_dist]
+remote = "https://github.com/coconut-crew/levenshtein-dist"
+branch = "main"
+commit = "f4dc93d7404c536d6e9eb03a23db1560e93ef232"
+entry_point = "src/init.luau"
