@@ -17,7 +17,6 @@ end
 
 function providers.add_package(name: pkg_id.GlobalName, src: SourceInfo)
 	providers.pkgs[name] = src
-	providers.list[src.type].on_source_added(name, src)
 end
 
 const function provider_of(name: pkg_id.GlobalName): create_provider.Identity<SourceInfo>
@@ -41,7 +40,7 @@ end
 function providers.get_dependencies_async(
 	name: pkg_id.GlobalName,
 	version: semver.Identity
-): create_provider.Dependencies
+): create_provider.DependencySet
 	return provider_of(name).get_dependencies_async(name, version)
 end
 

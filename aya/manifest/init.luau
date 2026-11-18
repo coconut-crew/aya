@@ -36,7 +36,9 @@ export type Identity = {
 	dependencies: { [pkg_id.GlobalName]: DependencyEntry },
 }
 
-const function parse_raw_dependency(raw_name: string, raw: RawDepEntry): DependencyEntry
+const manifest = {}
+
+function manifest.parse_raw_dependency(raw_name: string, raw: RawDepEntry): DependencyEntry
 	const global_name = pkg_id.global_name(raw_name)
 
 	local version_string = raw.version
@@ -61,8 +63,6 @@ const function parse_raw_dependency(raw_name: string, raw: RawDepEntry): Depende
 	end
 end
 
-const manifest = {}
-
 function manifest.parse(str_content: string): Identity
 	log.trace(`\tparsing toml`)
 
@@ -79,7 +79,7 @@ function manifest.parse(str_content: string): Identity
 		assert(type(raw_dependencies) == "table", "the dependencies entry must be a table")
 
 		for dependency, data in raw_dependencies do
-			const parsed = parse_raw_dependency(dependency, data)
+			const parsed = manifest.parse_raw_dependency(dependency, data)
 
 			manifest_contents.dependencies[pkg_id.global_name(dependency)] = parsed
 
