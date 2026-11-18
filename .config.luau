@@ -6,8 +6,8 @@ const luau_config = {
 		lute = "~/.lute/typedefs/1.0.1/lute",
 		vendor = "vendor",
 
-		aya = "aya",
-		pkg = "pkgs/links",
+		aya = "./aya",
+		pkg = "./pkgs/links",
 	},
 
 	lint = {

@@ -18,7 +18,7 @@ entry_point = "src/init.luau"
 [cli_parser]
 remote = "https://github.com/coconut-crew/cli-parser.git"
 branch = "main"
-commit = "cd0e874aa77f22aa2c62e9d78a896fff106b1523"
+commit = "7c6b018c2f0ba3a4991f9368fe9343a329321d9c"
 entry_point = "src/init.luau"
 
 [colorful]
