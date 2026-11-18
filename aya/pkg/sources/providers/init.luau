@@ -1,0 +1,52 @@
+const create_provider = require("@aya/pkg/sources/create_provider")
+const path = require("@std/path")
+const pkg_id = require("@aya/pkg/utils/pkg_id")
+const semver = require("@aya/pkg/utils/semver")
+const source_info = require("@aya/pkg/sources/source_info")
+
+type SourceInfo = source_info.Identity
+
+const providers = {
+	list = {} :: { [string]: create_provider.Identity<SourceInfo> },
+	pkgs = {} :: { [pkg_id.GlobalName]: SourceInfo },
+}
+
+function providers.add_provider(provider_name: string, provider: create_provider.Identity<any>)
+	providers.list[provider_name] = provider
+end
+
+function providers.add_package(name: pkg_id.GlobalName, src: SourceInfo)
+	providers.pkgs[name] = src
+	providers.list[src.type].on_source_added(name, src)
+end
+
+const function provider_of(name: pkg_id.GlobalName): create_provider.Identity<SourceInfo>
+	const src = providers.pkgs[name]
+	assert(src, `package {name} does not have a source`)
+
+	const provider = providers.list[src.type]
+	assert(provider, `no active provider named {src.type}`)
+
+	return provider
+end
+
+function providers.download_async(
+	name: pkg_id.GlobalName,
+	version: semver.Identity,
+	at: path.Pathlike
+)
+	provider_of(name).download_async(name, version, at)
+end
+
+function providers.get_dependencies_async(
+	name: pkg_id.GlobalName,
+	version: semver.Identity
+): create_provider.Dependencies
+	return provider_of(name).get_dependencies_async(name, version)
+end
+
+function providers.get_versions_async(name: pkg_id.GlobalName): { semver.Identity }
+	return provider_of(name).get_versions_async(name)
+end
+
+return providers

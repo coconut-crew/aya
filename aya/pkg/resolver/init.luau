@@ -4,7 +4,7 @@
 ]]
 
 const pkg_id = require("@aya/pkg/utils/pkg_id")
-const provider = require("@aya/pkg/provider")
+const providers = require("@aya/pkg/sources/providers")
 const semver = require("@aya/pkg/utils/semver")
 const semver_range = require("@aya/pkg/utils/semver_range")
 const version_set = require("@aya/pkg/utils/version_set")
@@ -43,7 +43,7 @@ const function find_candidates(
 	requirements: { Requirement }
 ): { semver.Identity }
 	const result: { semver.Identity } = {}
-	for _, version in provider.get_versions_async(name) do
+	for _, version in providers.get_versions_async(name) do
 		if satisfies_all(version, requirements) then
 			table.insert(result, version)
 		end
@@ -178,7 +178,7 @@ function resolver.solve(roots: Ranges, locked: { [pkg_id.Identifier]: true }?): 
 		frame.index += 1
 
 		const candidate = frame.candidates[frame.index]
-		const dependencies = provider.get_dependencies_async(frame.name, candidate)
+		const dependencies = providers.get_dependencies_async(frame.name, candidate)
 		const required_by = pkg_id.identifier(frame.name, candidate)
 
 		selected = table.clone(frame.selected)

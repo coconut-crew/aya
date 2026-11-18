@@ -1,5 +1,5 @@
-const fake = require("@aya/pkg/provider/fake")
-const provider = require("@aya/pkg/provider")
+const fake = require("@aya/pkg/sources/providers/fake")
+const providers = require("@aya/pkg/sources/providers")
 const resolver = require("@aya/pkg/resolver")
 const semver = require("@aya/pkg/utils/semver")
 const semver_range = require("@aya/pkg/utils/semver_range")
@@ -18,8 +18,11 @@ end
 -- replaces every registered package with the fake ones in the spec
 -- { [package name]: { [version]: { [dependency name]: range string } } }
 const function use_registry(spec: { [string]: { [string]: { [string]: string } } })
-	table.clear(provider.pkg_source_map)
+	table.clear(providers.pkgs)
 	table.clear(fake.registry)
+
+	-- a fresh provider so sources from earlier cases don't carry over
+	providers.add_provider("fake", fake.provider())
 
 	for name, versions in spec do
 		const entry: { [string]: resolver.Ranges } = {}
@@ -28,7 +31,7 @@ const function use_registry(spec: { [string]: { [string]: { [string]: string } }
 		end
 
 		fake.registry[name] = entry
-		provider.set_source(name, { type = "fake", name = name })
+		providers.add_package(name, { type = "fake" })
 	end
 end
 
@@ -44,9 +47,6 @@ const function solve_error(roots: resolver.Ranges): string
 end
 
 test.suite("resolver.solve", function(suite)
-	suite:beforeAll(function()
-		provider.init()
-	end)
 	suite:case("selects the newest version satisfying the root requirement", function(t)
 		use_registry({
 			a = { ["2.0.0"] = {}, ["1.3.0"] = {}, ["1.0.0"] = {} },

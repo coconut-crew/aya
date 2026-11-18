@@ -83,22 +83,18 @@ const function cache_entry_deserialize(contents: string): VersionRevisionMap
 	return working_tbl
 end
 
--- nil when the remote isn't hosted on github
-const function github_manifest_url(remote: string, revision: string): string?
+const function github_manifest_url(remote: string, revision: string): string
 	const canonical = canonicalize_remote(remote)
-	if string.sub(canonical, 1, #GITHUB_PREFIX) ~= GITHUB_PREFIX then
-		return nil
-	end
 
 	const owner, repo = table.unpack(string.split(string.sub(canonical, #GITHUB_PREFIX + 1), "/"))
-	assert(owner and repo, `{remote} is not a github repository url`)
+	assert(owner and repo, `what how`)
 
 	return string.format(MANIFEST_URL_TEMPLATE, owner, repo, revision)
 end
 
 const function fetch_manifest_async(url: string): string
 	const res = net.request(url)
-	assert(res.ok, `failed to fetch manifest from {url} with status {res.status}`)
+	assert(res.ok, `failed to fetch manifest at {url} with status {res.status}`)
 
 	return res.body
 end
@@ -113,10 +109,8 @@ const function read_manifest_async(
 		return cached
 	end
 
-	const url = github_manifest_url(remote, revision)
-	assert(url, `{remote} is not hosted on github, which is the only supported host for now`)
-
-	const contents = fetch_manifest_async(url)
+	-- TODO: when we do non-github hosts, remove this
+	const contents = fetch_manifest_async(github_manifest_url(remote, revision))
 	manifest_cache:set(revision, contents)
 
 	return contents
@@ -210,10 +204,10 @@ function git_cache.get_dependencies_async(
 end
 
 table.freeze(git_cache)
-return {
+return table.freeze({
 	new = constructor,
 
 	remote_cache_key = remote_cache_key,
 	remote_ls_tags = remote_ls_tags,
 	parse_ls_remote = parse_ls_remote,
-}
+})
