@@ -16,13 +16,16 @@ const function ranges(spec: { [string]: string }): resolver.Ranges
 end
 
 -- replaces every registered package with the fake ones in the spec
+-- packages in `registered` get a source up front, defaulting to every package in the spec
 -- { [package name]: { [version]: { [dependency name]: range string } } }
-const function use_registry(spec: { [string]: { [string]: { [string]: string } } })
+const function use_registry(
+	spec: { [string]: { [string]: { [string]: string } } },
+	registered: { string }?
+)
 	table.clear(providers.pkgs)
 	table.clear(fake.registry)
 
-	-- a fresh provider so sources from earlier cases don't carry over
-	providers.add_provider("fake", fake.provider())
+	providers.add_provider("fake", fake.provider)
 
 	for name, versions in spec do
 		const entry: { [string]: resolver.Ranges } = {}
@@ -31,7 +34,9 @@ const function use_registry(spec: { [string]: { [string]: { [string]: string } }
 		end
 
 		fake.registry[name] = entry
-		providers.add_package(name, { type = "fake" })
+		if registered == nil or table.find(registered, name) then
+			providers.add_package(name, { type = "fake" })
+		end
 	end
 end
 
@@ -175,5 +180,18 @@ test.suite("resolver.solve", function(suite)
 		t.strContains(message, "version conflict for 'c'")
 		t.strContains(message, "=1.0.0  (required by a@1.0.0)")
 		t.strContains(message, "=1.1.0  (required by b@1.0.0)")
+	end)
+
+	suite:case("resolves dependencies whose source is only known from their dependent", function(t)
+		use_registry({
+			a = { ["1.0.0"] = { b = "^1.0.0" } },
+			b = { ["1.0.0"] = { c = "^1.0.0" } },
+			c = { ["1.2.0"] = {}, ["1.0.0"] = {} },
+		}, { "a" })
+
+		const resolution = resolver.solve(ranges({ a = "^1.0.0" }))
+
+		t.eq(version_in(resolution, "b"), "1.0.0")
+		t.eq(version_in(resolution, "c"), "1.2.0")
 	end)
 end)

@@ -6,8 +6,6 @@ const net = require("@std/net")
 const pkg_id = require("@aya/pkg/utils/pkg_id")
 const process = require("@std/process")
 const semver = require("@aya/pkg/utils/semver")
-const semver_range = require("@aya/pkg/utils/semver_range")
-const source_info = require("@aya/pkg/sources/source_info")
 const to_hex = require("@aya/common/utils/to_hex")
 
 type VersionRevisionMap = { [string]: string }
@@ -189,20 +187,12 @@ end
 function git_cache.get_dependencies_async(
 	self: Identity,
 	remote: string,
-	version: semver.Identity,
-	sources: { [pkg_id.GlobalName]: source_info.Identity }
-): { [pkg_id.GlobalName]: semver_range.Identity }
+	version: semver.Identity
+): { [pkg_id.GlobalName]: manifest.DependencyEntry }
 	const revision = self:get_revision_async(remote, version)
 	const manifest_contents = read_manifest_async(self.manifest_cache, remote, revision)
-	const parsed_manifest = manifest.parse(manifest_contents)
 
-	const dependencies: { [pkg_id.GlobalName]: semver_range.Identity } = {}
-
-	for global_name, entry in parsed_manifest.dependencies do
-		dependencies[global_name] = entry.version
-	end
-
-	return dependencies
+	return manifest.parse(manifest_contents).dependencies
 end
 
 table.freeze(git_cache)

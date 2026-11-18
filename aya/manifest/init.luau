@@ -10,7 +10,7 @@ const toml = require("@vendor/toml")
 
 const CONFIG_FILE_NAME = ".aya.toml"
 
-type DependencyEntry = {
+export type DependencyEntry = {
 	global_name: pkg_id.GlobalName,
 	version: semver_range.Identity,
 	source: source_info.Git,

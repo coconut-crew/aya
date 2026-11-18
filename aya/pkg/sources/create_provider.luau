@@ -28,11 +28,11 @@ export type Identity<T> = {
 	get_versions_async: (name: pkg_id.GlobalName) -> { semver.Identity },
 }
 
-const function create_provider<T>(impl_constructor: (
-	sources: { [pkg_id.GlobalName]: source_info.Identity }
-) -> Impl<T>): (
-	sources: { [pkg_id.GlobalName]: source_info.Identity }
-) -> Identity<T>
+export type Constructor<T> = (sources: source_info.Sources) -> Identity<T>
+
+const function create_provider<T>(
+	impl_constructor: (sources: source_info.Sources) -> Impl<T>
+): Constructor<T>
 	return impl_constructor
 end
 

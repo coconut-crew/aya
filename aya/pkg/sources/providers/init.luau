@@ -8,11 +8,14 @@ type SourceInfo = source_info.Identity
 
 const providers = {
 	list = {} :: { [string]: create_provider.Identity<SourceInfo> },
-	pkgs = {} :: { [pkg_id.GlobalName]: SourceInfo },
+	pkgs = {} :: source_info.Sources,
 }
 
-function providers.add_provider(provider_name: string, provider: create_provider.Identity<any>)
-	providers.list[provider_name] = provider
+function providers.add_provider(
+	provider_name: string,
+	constructor: create_provider.Constructor<any>
+)
+	providers.list[provider_name] = constructor(providers.pkgs)
 end
 
 function providers.add_package(name: pkg_id.GlobalName, src: SourceInfo)
