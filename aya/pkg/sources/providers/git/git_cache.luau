@@ -1,8 +1,10 @@
+const app_dirs = require("@aya/common/app_dirs")
 const cache = require("@aya/pkg/utils/cache")
 const canonicalize_remote = require("@aya/pkg/utils/canonicalize_remote")
 const crypto = require("@lute/crypto")
+const fs = require("@std/fs")
 const manifest = require("@aya/manifest")
-const net = require("@std/net")
+const path = require("@std/path")
 const process = require("@std/process")
 const semver = require("@aya/pkg/utils/semver")
 const to_hex = require("@aya/common/utils/to_hex")
@@ -11,8 +13,7 @@ type VersionRevisionMap = { [string]: string }
 
 const TAG_PATTERN = "^refs/tags/v?([^%^]+)"
 const PARSE_CACHE_ENTRY_PATTERN = "%s*([^=\n]-)%s*=%s*([^\n]-)%s*\n"
-const MANIFEST_URL_TEMPLATE = "https://raw.githubusercontent.com/%*/%*/%*/.aya.toml"
-const GITHUB_PREFIX = "https://github.com/"
+const REPOS_CACHE_DIR = "git_repos"
 
 const function parse_ls_remote(content: string): VersionRevisionMap
 	const versions: VersionRevisionMap = {}
@@ -136,22 +137,7 @@ const function cache_entry_deserialize(contents: string): VersionRevisionMap
 	return working_tbl
 end
 
-const function github_manifest_url(remote: string, revision: string): string
-	const canonical = canonicalize_remote(remote)
-
-	const owner, repo = table.unpack(string.split(string.sub(canonical, #GITHUB_PREFIX + 1), "/"))
-	assert(owner and repo, `what how`)
-
-	return string.format(MANIFEST_URL_TEMPLATE, owner, repo, revision)
-end
-
-const function fetch_manifest_async(url: string): string
-	const res = net.request(url)
-	assert(res.ok, `failed to fetch manifest at {url} with status {res.status}`)
-
-	return res.body
-end
-
+-- fetched through git so the credential helper handles private repos
 const function read_manifest_async(
 	manifest_cache: cache.Identity,
 	remote: string,
@@ -162,11 +148,40 @@ const function read_manifest_async(
 		return cached
 	end
 
-	-- TODO: when we do non-github hosts, remove this
-	const contents = fetch_manifest_async(github_manifest_url(remote, revision))
-	manifest_cache:set(revision, contents)
+	const repo =
+		path.format(path.join(app_dirs.get("cache"), REPOS_CACHE_DIR, remote_cache_key(remote)))
+	if not fs.exists(repo) then
+		const init = process.run({ "git", "init", "--bare", "--quiet", "--", repo })
+		assert(init.ok, `git failed with exit code {init.exitcode}:\n{init.stderr}`)
+	end
 
-	return contents
+	const fetch = process.run({
+		"git",
+		"-C",
+		repo,
+		"fetch",
+		"--quiet",
+		"--depth=1",
+		"--filter=blob:none",
+		"--",
+		remote,
+		revision,
+	})
+	assert(fetch.ok, `fetching {remote} at rev {revision} failed:\n{fetch.stderr}`)
+
+	const file = process.run({
+		"git",
+		"-C",
+		repo,
+		"cat-file",
+		"blob",
+		`{revision}:{manifest.CONFIG_FILE_NAME}`,
+	})
+	assert(file.ok, `reading manifest from {remote} at {revision} failed:\n{file.stderr}`)
+
+	manifest_cache:set(revision, file.stdout)
+
+	return file.stdout
 end
 
 const git_cache = {}

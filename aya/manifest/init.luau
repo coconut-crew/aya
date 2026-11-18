@@ -51,7 +51,9 @@ const function version_with_default_caret(text: string): semver_range.Identity
 	return semver_range.parse("^" .. text)
 end
 
-const manifest = {}
+const manifest = {
+	CONFIG_FILE_NAME = CONFIG_FILE_NAME,
+}
 
 function manifest.parse_raw_dependency(raw_name: string, raw: RawDepEntry): DependencyEntry
 	const global_name = pkg_id.global_name(raw_name)
