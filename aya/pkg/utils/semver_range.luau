@@ -34,6 +34,18 @@ function semver_range.parse(text: string): Identity
 	}
 end
 
+function semver_range.prerelease_allowed(range: Identity, version: semver.Identity): boolean
+	if not version.prerelease then
+		return true
+	end
+
+	const target = range.version
+	return target.prerelease ~= false
+		and target.major == version.major
+		and target.minor == version.minor
+		and target.patch == version.patch
+end
+
 function semver_range.print(range: Identity): string
 	return `{range.op}{semver.print(range.version)}`
 end

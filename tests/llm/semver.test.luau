@@ -11,6 +11,16 @@ const function version(major: number, minor: number, patch: number): semver.Iden
 end
 
 test.suite("semver.parse", function(suite)
+	suite:case("rejects empty prerelease identifiers", function(t)
+		t.throws(semver.parse, "1.0.0-a..b")
+		t.throws(semver.parse, "1.0.0-.a")
+		t.throws(semver.parse, "1.0.0-a.")
+	end)
+
+	suite:case("accepts alphanumeric prerelease identifiers that start with zero", function(t)
+		t.eq(semver.print(semver.parse("1.0.0-01e5")), "1.0.0-01e5")
+	end)
+
 	suite:case("parses a release version with no prerelease", function(t)
 		t.eq(semver.parse("1.20.3"), version(1, 20, 3))
 	end)

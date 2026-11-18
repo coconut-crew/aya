@@ -194,4 +194,32 @@ test.suite("resolver.solve", function(suite)
 		t.eq(version_in(resolution, "b"), "1.0.0")
 		t.eq(version_in(resolution, "c"), "1.2.0")
 	end)
+
+	suite:case("applies every dependent's range to a dependency discovered earlier", function(t)
+		use_registry({
+			a = { ["1.0.0"] = { b = "^1.0.0" } },
+			c = { ["1.0.0"] = { b = "=1.0.0" } },
+			b = { ["1.1.0"] = {}, ["1.0.0"] = {} },
+		}, { "a", "c" })
+
+		const resolution = resolver.solve(ranges({ a = "^1.0.0", c = "^1.0.0" }))
+
+		t.eq(version_in(resolution, "b"), "1.0.0")
+	end)
+
+	suite:case("omits dependencies only required by an abandoned candidate", function(t)
+		use_registry({
+			a = {
+				["1.1.0"] = { c = "=1.0.0", x = "^1.0.0" },
+				["1.0.0"] = {},
+			},
+			c = { ["1.2.0"] = {}, ["1.0.0"] = {} },
+			x = { ["1.0.0"] = {} },
+		}, { "a", "c" })
+
+		const resolution = resolver.solve(ranges({ a = "^1.0.0", c = "^1.1.0" }))
+
+		t.eq(version_in(resolution, "a"), "1.0.0")
+		t.eq(version_in(resolution, "x"), nil)
+	end)
 end)

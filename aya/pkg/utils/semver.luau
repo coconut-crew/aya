@@ -106,11 +106,11 @@ function semver.parse(version_string: string): Identity
 	end
 
 	for identifier in string.gmatch(prerelease, "[%w%-]+") do
-		if tonumber(identifier) and has_leading_zeros(identifier) then
-			error(
-				string.format(LEADING_ZERO_ERR, "prerelease identifier", identifier, version_string)
-			)
-		end
+		assert(identifier ~= "", `empty prerelease identifier in semver string "{version_string}"`)
+		assert(
+			not (is_numeric(identifier) and has_leading_zeros(identifier)),
+			string.format(LEADING_ZERO_ERR, "prerelease identifier", identifier, version_string)
+		)
 	end
 
 	return {
