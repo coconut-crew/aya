@@ -25,10 +25,24 @@ type RawDepEntry =
 		version: nil,
 	}
 
+type RawCrateEntry = {
+	needs: { string },
+	exports: { string },
+	dir: string,
+}
+
 type RawTableRepresentation = {
-	package: { version: string? }?,
+	package: {
+		name: string,
+		version: string?,
+	}?,
+
 	dependencies: {
 		[string]: RawDepEntry,
+	},
+
+	crates: {
+		[string]: RawCrateEntry,
 	},
 }
 

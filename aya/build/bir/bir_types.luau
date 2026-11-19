@@ -1,10 +1,31 @@
 const path = require("@std/path")
 
-export type BirRuleset = {}
-
-export type BirCompileFile = {
+type LinkCratePair = {
+	link_location: path.Pathlike,
 	src: path.Pathlike,
+}
+
+export type BirCompileLuauObject = {
+	stat: "compile",
+
+	--- Relative to workspace
+	src: path.Pathlike,
+
+	--- Relative to build
 	dst: path.Pathlike,
 
-	rules: BirRuleset,
+	vars: { [string]: string },
 }
+
+export type BirLinkCrates = {
+	stat: "link_crates",
+
+	--- Relative to workspace
+	dir: path.Pathlike,
+
+	links: { LinkCratePair },
+}
+
+export type BirStat = | BirCompileLuauObject | BirLinkCrates
+
+return nil

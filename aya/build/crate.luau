@@ -1,6 +1,7 @@
 const pkg_id = require("@aya/pkg/utils/pkg_id")
 
 export type CrateName = string
+export type Id = string
 
 const crate = {}
 
