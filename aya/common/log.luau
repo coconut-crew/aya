@@ -3,12 +3,12 @@ const colorful = require("@pkg/colorful")
 const styles = colorful.styles
 const grey = colorful.txt_colors.grey
 
-const ERROR_INDICATOR = styles.err_indicator(" ERROR ")
-const WARN_INDICATOR = styles.warn_indicator(" WARN  ")
-const INFO_INDICATOR = styles.info_indicator(" INFO  ")
-const DEBUG_INDICATOR = styles.debug_indicator(" DEBUG ")
-const TRACE_INDICATOR = styles.trace_indicator(" TRACE ")
-const SUCCESS_INDICATOR = styles.success_indicator(" ✓ DONE")
+const ERROR_INDICATOR = styles.err_indicator("  ERROR  ")
+const WARN_INDICATOR = styles.warn_indicator("  WARN   ")
+const INFO_INDICATOR = styles.info_indicator("  INFO   ")
+const DEBUG_INDICATOR = styles.debug_indicator("  DEBUG  ")
+const TRACE_INDICATOR = styles.trace_indicator("  TRACE  ")
+const SUCCESS_INDICATOR = styles.success_indicator(" ✓ DONE  ")
 
 const MESSAGE_INDENT = string.rep(" ", 21)
 
