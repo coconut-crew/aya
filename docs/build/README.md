@@ -6,16 +6,10 @@ name = "content_management"
 version = "0.1.0"
 
 [package.dependencies]
-log = {
-	version = "0.1.0",
-	github = "coconut-crew/log"
-}
+log = { version = "0.1.0", github = "coconut-crew" }
 
 [workspace.dependencies]
-lints = {
-	version = "0.1.0",
-	github = "coconut-crew/lints"
-}
+lints = { version = "0.1.0", github = "coconut-crew" }
 
 [crates.server]
 dir = "src/server"
