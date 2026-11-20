@@ -2,7 +2,7 @@ const colorful = require("@pkg/colorful")
 const log = require("@aya/common/log")
 const process = require("@std/process")
 
-export type ExitCode = "MANIFEST_PARSING_FAILED" | "ASSERTION_FAILED"
+export type ExitCode = "MANIFEST_PARSING_FAILED" | "ASSERTION_FAILED" | "WORKSPACE_NO_MANIFEST"
 export type ExitReason = {
 	code: number,
 	explanation: { string },
@@ -22,6 +22,13 @@ const reasons: { [ExitCode]: ExitReason } = {
 		code = 1,
 		explanation = {
 			`ASSERTION FAILED: %*`,
+		},
+	},
+
+	["WORKSPACE_NO_MANIFEST"] = {
+		code = 1,
+		explanation = {
+			"The workspace has no .aya.toml manifest",
 		},
 	},
 }

@@ -135,6 +135,11 @@ end
 function manifest.find_closest_config(location: path.Pathlike): path.Pathlike?
 	location = path.parse(location)
 
+	const first = path.join(location, CONFIG_FILE_NAME)
+	if fs.exists(first) then
+		return first
+	end
+
 	local cursor = location
 	for i = #location.parts, 1, -1 do
 		cursor = path.normalize(path.join(cursor, ".."))

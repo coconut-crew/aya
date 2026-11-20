@@ -1,4 +1,2 @@
 [dependencies]
-log = { version = "0.1.0", github = "coconut-crew" }
-colorful = { version = "0.1.0", github = "ffrostfall" }
-bytenet = { version = "0.4.3", github = "ffrostfall" }
+aya_dependency = { version = "0.1.0", github = "coconut-crew" }
