@@ -8,7 +8,7 @@ function ninja_rules.compile(): luninjau.NinjaStatRule
 		name = "compile",
 
 		variables = {
-			command = "aya make compile $in $out --workspace $AYA_WORKSPACE",
+			command = "aya c compile $in $out --workspace $AYA_WORKSPACE",
 		},
 	}
 end
@@ -19,7 +19,7 @@ function ninja_rules.configure(): luninjau.NinjaStatRule
 		name = "configure",
 
 		variables = {
-			command = "aya make configure --workspace $AYA_WORKSPACE",
+			command = "aya c configure --workspace $AYA_WORKSPACE",
 		},
 	}
 end
@@ -30,7 +30,7 @@ function ninja_rules.linkers(): luninjau.NinjaStatRule
 		name = "linkers",
 
 		variables = {
-			command = "aya make linkers $in --workspace $AYA_WORKSPACE",
+			command = "aya c link $in $out --workspace $AYA_WORKSPACE",
 		},
 	}
 end
