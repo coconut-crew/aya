@@ -1,4 +1,6 @@
+const colorful = require("@pkg/colorful")
 const create_provider = require("@aya/pkg/sources/create_provider")
+const log = require("@aya/common/log")
 const path = require("@std/path")
 const pkg_id = require("@aya/pkg/utils/pkg_id")
 const semver = require("@aya/pkg/utils/semver")
@@ -38,6 +40,9 @@ function providers.download_async(
 	at: path.Pathlike
 )
 	provider_of(name).download_async(name, version, at)
+	log.success(
+		`downloaded package {colorful.styles.keyword(name .. "@" .. semver.print(version))}`
+	)
 end
 
 function providers.get_dependencies_async(
