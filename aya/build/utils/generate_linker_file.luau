@@ -113,7 +113,13 @@ const function generate_linker_file(src: path.Path, dst: path.Path)
 		entry_point = path.dirname(entry_point)
 	end
 
-	const relative = string.gsub(tostring(path.relative(source_path, entry_point)), "\\", "/")
+	local relative = string.gsub(tostring(path.relative(source_path, entry_point)), "\\", "/")
+
+	-- bruh
+	-- TODO: fix this mess
+	if string.sub(relative, -#".luau") == ".luau" then
+		relative = string.sub(relative, 1, -#".luau" - 1)
+	end
 
 	const file_contents: { string } = {
 		`const REQUIRED_MODULE = require("{relative}")\n`,
