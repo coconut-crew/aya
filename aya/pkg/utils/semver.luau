@@ -105,12 +105,17 @@ function semver.parse(version_string: string): Identity
 		error(string.format(LEADING_ZERO_ERR, "patch version", patch, version_string))
 	end
 
-	for identifier in string.gmatch(prerelease, "[%w%-]+") do
-		assert(identifier ~= "", `empty prerelease identifier in semver string "{version_string}"`)
-		assert(
-			not (is_numeric(identifier) and has_leading_zeros(identifier)),
-			string.format(LEADING_ZERO_ERR, "prerelease identifier", identifier, version_string)
-		)
+	if has_prerelease then
+		for _, identifier in string.split(prerelease, ".") do
+			assert(
+				identifier ~= "",
+				`empty prerelease identifier in semver string "{version_string}"`
+			)
+			assert(
+				not (is_numeric(identifier) and has_leading_zeros(identifier)),
+				string.format(LEADING_ZERO_ERR, "prerelease identifier", identifier, version_string)
+			)
+		end
 	end
 
 	return {
