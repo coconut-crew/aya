@@ -8,21 +8,17 @@ type File = {
 	build_stats: { luninjau.NinjaStatBuild },
 }
 
-const function to_ninja_path(input_path: path.Pathlike)
-	return path.format(input_path)
-end
-
-const function emit_compile(file: File, stat: bir_types.BirCompileLuauObject)
+const function emit_transform(file: File, stat: bir_types.BirTransformLuauObject)
 	const variables = stat.vars
 
 	-- this is where we will do weird stuff with compile configs
 
 	table.insert(file.build_stats, {
 		stat = "build" :: "build",
-		rule = "compile",
+		rule = "transform",
 
-		outputs = { to_ninja_path(stat.dst) },
-		dependencies = { to_ninja_path(stat.src) },
+		outputs = { path.format(stat.dst) },
+		dependencies = { path.format(stat.src) },
 
 		variables = variables,
 	})
@@ -35,7 +31,7 @@ const function emit_configure_crate(file: File, stat: bir_types.BirLinkCrates)
 
 	table.insert(
 		build_ninja_stmt.implicit_outputs,
-		to_ninja_path(path.join(stat.dir, ".config.luau"))
+		path.format(path.join(stat.dir, ".config.luau"))
 	)
 
 	for _, pair in stat.links do
@@ -44,20 +40,31 @@ const function emit_configure_crate(file: File, stat: bir_types.BirLinkCrates)
 			rule = "linkers",
 
 			dependencies = {
-				to_ninja_path(pair.src),
+				path.format(pair.src),
 			},
 
 			outputs = {
-				to_ninja_path(pair.link_location),
+				path.format(pair.link_location),
 			},
 		})
 	end
 end
 
+const function emit_compile_bin(file: File, stat: bir_types.BirCompileBinStat)
+	table.insert(file.build_stats, {
+		stat = "build" :: "build",
+		rule = "compile_bin",
+
+		dependencies = { path.format(stat.src) },
+		outputs = { path.format(stat.dst) },
+	})
+end
+
 const bir_emit = {
 	stat_emits = {
-		compile = emit_compile,
+		compile = emit_transform,
 		configure_crate = emit_configure_crate,
+		compile_bin = emit_compile_bin,
 	},
 }
 
@@ -87,11 +94,13 @@ function bir_emit.walk(input: { bir_types.BirStat }): string
 		rules = {},
 	}
 
-	for _, bir_stat in input do
-		if bir_stat.stat == "compile" then
-			emit_compile(file, bir_stat)
+	for _, bir_stat: bir_types.BirStat in input do
+		if bir_stat.stat == "transform" then
+			emit_transform(file, bir_stat)
 		elseif bir_stat.stat == "link_crates" then
 			emit_configure_crate(file, bir_stat)
+		elseif bir_stat.stat == "compile_bin" then
+			emit_compile_bin(file, bir_stat)
 		end
 	end
 
@@ -99,6 +108,8 @@ function bir_emit.walk(input: { bir_types.BirStat }): string
 		ninja_rules.compile(),
 		ninja_rules.configure(),
 		ninja_rules.linkers(),
+		ninja_rules.compile_bin(),
+		ninja_rules.custom_command(),
 	}
 
 	table.insert(ninja_stats, file.build_build_ninja)
