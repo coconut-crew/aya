@@ -14,7 +14,7 @@ on:
     paths:
       - .github/workflows/tests.yml
       - .lute/**
-      - aya/**
+      - src/**
       - tests/**
       - .config.luau
   pull_request:
@@ -42,7 +42,7 @@ jobs:
           # only checkout files which are needed for running tests
           sparse-checkout: |
             .lute/
-            aya/
+            src/
             tests/
             .config.luau
             rokit.toml

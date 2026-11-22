@@ -1,5 +1,5 @@
 const fs = require("@std/fs")
-const generate_linker_file = require("@aya/build/utils/generate_linker_file")
+const generate_linker_file = require("@src/build/utils/generate_linker_file")
 const luau = require("@std/luau")
 const path = require("@std/path")
 const process = require("@std/process")
@@ -90,7 +90,8 @@ test.suite("generate_linker_file", function(suite)
 	end)
 
 	suite:case("forwards generic packs with their defaults", function(t)
-		const output = linker_text("export type Fn<T, A... = ...number> = (T, A...) -> ()\nreturn {}")
+		const output =
+			linker_text("export type Fn<T, A... = ...number> = (T, A...) -> ()\nreturn {}")
 
 		t.strContains(output, "export type Fn<T, A... = ...number> = REQUIRED_MODULE.Fn<T, A...>\n")
 	end)

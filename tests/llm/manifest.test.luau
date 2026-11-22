@@ -1,6 +1,6 @@
-const manifest = require("@aya/manifest")
-const semver = require("@aya/pkg/utils/semver")
-const semver_range = require("@aya/pkg/utils/semver_range")
+const manifest = require("@src/manifest")
+const semver = require("@src/pkg/utils/semver")
+const semver_range = require("@src/pkg/utils/semver_range")
 const test = require("@std/test")
 
 test.suite("manifest.parse", function(suite)

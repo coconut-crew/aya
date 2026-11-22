@@ -1,8 +1,8 @@
-const fake = require("@aya/pkg/sources/providers/fake")
-const providers = require("@aya/pkg/sources/providers")
-const resolver = require("@aya/pkg/resolver")
-const semver = require("@aya/pkg/utils/semver")
-const semver_range = require("@aya/pkg/utils/semver_range")
+const fake = require("@src/pkg/sources/providers/fake")
+const providers = require("@src/pkg/sources/providers")
+const resolver = require("@src/pkg/resolver")
+const semver = require("@src/pkg/utils/semver")
+const semver_range = require("@src/pkg/utils/semver_range")
 const test = require("@std/test")
 
 -- { [package name]: range string }

@@ -1,4 +1,4 @@
-const interval_set = require("@aya/common/utils/interval_set")
+const interval_set = require("@src/common/utils/interval_set")
 const test = require("@std/test")
 
 type Set = interval_set.Identity<number>

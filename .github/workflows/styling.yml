@@ -14,7 +14,7 @@ on:
     paths:
       - .github/workflows/styling.yml
       - .lute/**
-      - aya/**
+      - src/**
       - tests/**
       - .config.luau
       - stylua.toml
@@ -35,7 +35,7 @@ jobs:
           # only checkout files which are being styled
           sparse-checkout: |
             .lute/
-            aya/
+            src/
             tests/
             .config.luau
             stylua.toml
@@ -46,4 +46,4 @@ jobs:
         uses: CompeyDev/setup-rokit@1d9390883f7ebce19d48f5b8d006e11d387c92ab
 
       - name: run stylua
-        run: stylua --check .lute/ aya/ tests/ .config.luau
+        run: stylua --check .lute/ src/ tests/ .config.luau

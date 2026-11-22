@@ -1,5 +1,5 @@
 const test = require("@std/test")
-const to_hex = require("@aya/common/utils/to_hex")
+const to_hex = require("@src/common/utils/to_hex")
 
 test.suite("to_hex", function(suite)
 	suite:case("encodes every byte as two uppercase hex digits, high nibble first", function(t)

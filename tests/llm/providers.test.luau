@@ -1,6 +1,6 @@
-const fake = require("@aya/pkg/sources/providers/fake")
-const providers = require("@aya/pkg/sources/providers")
-const semver = require("@aya/pkg/utils/semver")
+const fake = require("@src/pkg/sources/providers/fake")
+const providers = require("@src/pkg/sources/providers")
+const semver = require("@src/pkg/utils/semver")
 const test = require("@std/test")
 
 test.suite("providers", function(suite)

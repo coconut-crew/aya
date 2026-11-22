@@ -1,4 +1,4 @@
-const git_cache = require("@aya/pkg/sources/providers/git/git_cache")
+const git_cache = require("@src/pkg/sources/providers/git/git_cache")
 const test = require("@std/test")
 
 -- joins "revision\tref" lines the way `git ls-remote` prints them

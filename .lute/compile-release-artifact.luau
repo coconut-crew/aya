@@ -14,16 +14,19 @@ const binary_name = process.env["BINARY"]
 const exec_name = if system.win32 then `{binary_name}.exe` else binary_name
 const exec_path = `release/bin/{exec_name}`
 
-const res = process.run({ "lute", "compile", "./aya/init.luau", "--output", exec_path }, {
+const res = process.run({ "lute", "compile", "./src/init.luau", "--output", exec_path }, {
 	stdio = "inherit",
 })
 
 if system.win32 then
 	-- { "Compress-Archive", "-Path", `"{exec_path}"`, "-DestinationPath", `release/{exec_path}.tar.gz` }
-	process.system(`Compress-Archive -Path "{exec_path}" -DestinationPath "release/{binary_name}.zip" -Force`, {
-		stdio = "inherit",
-		system = "powershell",
-	})
+	process.system(
+		`Compress-Archive -Path "{exec_path}" -DestinationPath "release/{binary_name}.zip" -Force`,
+		{
+			stdio = "inherit",
+			system = "powershell",
+		}
+	)
 else
 	process.run({ "tar", "-czvf", `release/{binary_name}.tar.gz`, "-C", "release/bin", exec_name })
 end

@@ -1,6 +1,6 @@
-const bir_types = require("@aya/build/bir/bir_types")
+const bir_types = require("@src/build/bir/bir_types")
 const luninjau = require("@pkg/luninjau")
-const ninja_rules = require("@aya/build/bir/ninja_rules")
+const ninja_rules = require("@src/build/bir/ninja_rules")
 const path = require("@std/path")
 
 type File = {

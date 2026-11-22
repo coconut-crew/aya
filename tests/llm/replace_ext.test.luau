@@ -1,5 +1,5 @@
 const path = require("@std/path")
-const replace_ext = require("@aya/common/utils/replace_ext")
+const replace_ext = require("@src/common/utils/replace_ext")
 const test = require("@std/test")
 
 const function replaced(input: string, new_ext: string): string

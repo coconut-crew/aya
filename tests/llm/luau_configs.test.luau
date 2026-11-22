@@ -1,5 +1,5 @@
 const luau = require("@std/luau")
-const luau_configs = require("@aya/build/luau_configs")
+const luau_configs = require("@src/build/luau_configs")
 const path = require("@std/path")
 const test = require("@std/test")
 
@@ -19,7 +19,9 @@ end
 
 test.suite("luau_configs.serialize", function(suite)
 	suite:case("writes each language mode as a string", function(t)
-		for _, mode in { "strict", "nonstrict", "nocheck" } :: { "strict" | "nonstrict" | "nocheck" } do
+		for _, mode in
+			{ "strict", "nonstrict", "nocheck" } :: { "strict" | "nonstrict" | "nocheck" }
+		do
 			const config = config_with({})
 			config.language_mode = mode
 

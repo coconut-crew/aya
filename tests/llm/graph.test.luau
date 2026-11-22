@@ -1,4 +1,4 @@
-const graph = require("@aya/common/utils/graph")
+const graph = require("@src/common/utils/graph")
 const test = require("@std/test")
 
 type Graph = graph.Identity<string, string>

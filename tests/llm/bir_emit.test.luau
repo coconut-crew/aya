@@ -1,5 +1,5 @@
-const bir_emit = require("@aya/build/bir/bir_emit")
-const bir_types = require("@aya/build/bir/bir_types")
+const bir_emit = require("@src/build/bir/bir_emit")
+const bir_types = require("@src/build/bir/bir_types")
 const test = require("@std/test")
 
 const function compile_stat(src: string, dst: string): bir_types.BirCompileLuauObject

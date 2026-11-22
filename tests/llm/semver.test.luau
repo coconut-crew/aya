@@ -1,4 +1,4 @@
-const semver = require("@aya/pkg/utils/semver")
+const semver = require("@src/pkg/utils/semver")
 const test = require("@std/test")
 
 const function version(major: number, minor: number, patch: number): semver.Identity

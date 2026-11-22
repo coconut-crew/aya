@@ -1,8 +1,8 @@
-const interval_set = require("@aya/common/utils/interval_set")
-const semver = require("@aya/pkg/utils/semver")
-const semver_range = require("@aya/pkg/utils/semver_range")
+const interval_set = require("@src/common/utils/interval_set")
+const semver = require("@src/pkg/utils/semver")
+const semver_range = require("@src/pkg/utils/semver_range")
 const test = require("@std/test")
-const version_set = require("@aya/pkg/utils/version_set")
+const version_set = require("@src/pkg/utils/version_set")
 
 const function from_range(range: string): version_set.Identity
 	return version_set.from_range(semver_range.parse(range))
