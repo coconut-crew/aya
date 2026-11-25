@@ -1,14 +1,14 @@
-const anchors = require("@src/common/anchors")
 const path = require("@std/path")
+const project = require("@src/project")
 
-const dir = {}
+const build_dirs = {}
 
-function dir.out(): path.Pathlike
-	return path.join(anchors.build(), "out")
+function build_dirs.out(): path.Pathlike
+	return path.join(project.build_dir(), "out")
 end
 
-function dir.linkers(): path.Pathlike
-	return path.join(anchors.build(), "linkers")
+function build_dirs.linkers(): path.Pathlike
+	return path.join(project.build_dir(), "linkers")
 end
 
-return table.freeze(dir)
+return table.freeze(build_dirs)

@@ -2,13 +2,13 @@ const luninjau = require("@pkg/luninjau")
 
 const ninja_rules = {}
 
-function ninja_rules.compile(): luninjau.NinjaStatRule
+function ninja_rules.transform(): luninjau.NinjaStatRule
 	return {
 		stat = "rule",
-		name = "compile",
+		name = "transform",
 
 		variables = {
-			command = "aya c compile $in $out",
+			command = "aya --internal transform $in $out $plan",
 		},
 	}
 end
@@ -19,7 +19,7 @@ function ninja_rules.configure(): luninjau.NinjaStatRule
 		name = "configure",
 
 		variables = {
-			command = "aya c configure",
+			command = "aya --internal configure",
 		},
 	}
 end
@@ -30,7 +30,7 @@ function ninja_rules.linkers(): luninjau.NinjaStatRule
 		name = "linkers",
 
 		variables = {
-			command = "aya c link $in $out",
+			command = "aya --internal link $in $out",
 		},
 	}
 end

@@ -268,10 +268,8 @@ export type function ForValues(tbl: type, generic: type)
 			working_type:setreturns(rets.head, rets.tail)
 
 			return working_type
-		elseif working_type.tag == "nil" then
-			return types.singleton(nil)
 		else
-			error("unimplemented type: " .. working_type.tag)
+			return types.copy(working_type)
 		end
 	end
 

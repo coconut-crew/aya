@@ -105,7 +105,7 @@ function bir_emit.walk(input: { bir_types.BirStat }): string
 	end
 
 	const ninja_stats: { luninjau.NinjaStat } = {
-		ninja_rules.compile(),
+		ninja_rules.transform(),
 		ninja_rules.configure(),
 		ninja_rules.linkers(),
 		ninja_rules.compile_bin(),

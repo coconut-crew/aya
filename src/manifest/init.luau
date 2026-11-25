@@ -1,5 +1,6 @@
 const fs = require("@std/fs")
 const log = require("@src/common/log")
+const m_dependency_parser = require("@src/manifest/m_dependency_parser")
 const path = require("@std/path")
 const pkg_id = require("@src/pkg/utils/pkg_id")
 const semver = require("@src/pkg/utils/semver")
@@ -54,37 +55,9 @@ export type Identity = {
 
 const CONFIG_FILE_NAME = ".aya.toml"
 
---[[
-	we want implicit ^
-]]
-const function version_with_default_caret(text: string): semver_range.Identity
-	if semver_range.operators[string.sub(text, 1, 1)] then
-		return semver_range.parse(text)
-	end
-
-	return semver_range.parse("^" .. text)
-end
-
 const manifest = {
 	CONFIG_FILE_NAME = CONFIG_FILE_NAME,
 }
-
-function manifest.parse_raw_dependency(raw_name: string, raw: RawDepEntry): DependencyEntry
-	const global_name = pkg_id.global_name(raw_name)
-	assert(raw.github, "non-github dependencies are unsupported at this time")
-	assert(raw.version or raw.rev, `{global_name}: no version or revision`)
-
-	return {
-		global_name = global_name,
-		version = if raw.version then version_with_default_caret(raw.version) else semver_range.any,
-
-		source = {
-			type = "git",
-			remote = `https://github.com/{raw.github}/{global_name}.git`,
-			rev = raw.rev,
-		},
-	}
-end
 
 function manifest.parse(str_content: string): Identity
 	log.trace(`\tparsing toml`)
@@ -106,7 +79,7 @@ function manifest.parse(str_content: string): Identity
 		assert(type(raw_dependencies) == "table", "the dependencies entry must be a table")
 
 		for dependency, data in raw_dependencies do
-			const parsed = manifest.parse_raw_dependency(dependency, data)
+			const parsed = m_dependency_parser.parse_dep(dependency, data)
 
 			manifest_contents.dependencies[pkg_id.global_name(dependency)] = parsed
 

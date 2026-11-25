@@ -1,6 +1,9 @@
 # Example manifest
 
 ```toml
+[workspace.dependencies]
+lints = { version = "0.1.0", github = "coconut-crew" }
+
 [package]
 name = "content_management"
 version = "0.1.0"
@@ -8,24 +11,11 @@ version = "0.1.0"
 [package.dependencies]
 log = { version = "0.1.0", github = "coconut-crew" }
 
-[workspace.dependencies]
-lints = { version = "0.1.0", github = "coconut-crew" }
+[package.bin]
+obfuscate = {}
 
-[crates.server]
-dir = "src/server"
-exports = [
-	"api/**"
-]
-needs = [
-	"log/server"
-]
-
-[crates.shared]
-dir = "src/shared"
-exports = [
-	"api/**"
-]
-needs = [
-	"log/shared"
-]
+[crate.server]
+[crate.server.meta]
+[crate.server.bin]
+[crate.server.src]
 ```

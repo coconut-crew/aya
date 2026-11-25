@@ -2,7 +2,11 @@ const colorful = require("@pkg/colorful")
 const log = require("@src/common/log")
 const process = require("@std/process")
 
-export type ExitCode = "MANIFEST_PARSING_FAILED" | "ASSERTION_FAILED" | "WORKSPACE_NO_MANIFEST"
+export type ExitCode =
+	"MANIFEST_PARSING_FAILED"
+	| "ASSERTION_FAILED"
+	| "WORKSPACE_NO_MANIFEST"
+	| "ANCHOR_ENV_VARS_MISSING"
 export type ExitReason = {
 	code: number,
 	explanation: { string },
@@ -22,6 +26,7 @@ const reasons: { [ExitCode]: ExitReason } = {
 		code = 1,
 		explanation = {
 			`ASSERTION FAILED: %*`,
+			"this is an internal issue, please @ffrostfall",
 		},
 	},
 
@@ -29,6 +34,14 @@ const reasons: { [ExitCode]: ExitReason } = {
 		code = 1,
 		explanation = {
 			"The workspace has no .aya.toml manifest",
+		},
+	},
+
+	["ANCHOR_ENV_VARS_MISSING"] = {
+		code = 1,
+		explanation = {
+			`missing environment variables: %*`,
+			"likely an internal issue, @ffrostfall",
 		},
 	},
 }
