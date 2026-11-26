@@ -32,3 +32,9 @@ remote = "https://github.com/coconut-crew/levenshtein-dist"
 branch = "main"
 commit = "f4dc93d7404c536d6e9eb03a23db1560e93ef232"
 entry_point = "src/init.luau"
+
+[yaml_luau]
+remote = "https://github.com/ffrostfall/yaml-luau.git"
+branch = "main"
+commit = "45b9b9232758a88af02a06e2958f7e314e6257d9"
+entry_point = "src/init.luau"

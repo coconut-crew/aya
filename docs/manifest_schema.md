@@ -1,45 +1,60 @@
 # Workspace
 
-```toml
-# "workspace.aya.toml" at project root
+```yaml
+# "workspace.aya.yaml" at project root
 #	Workspace-level configs. The build directory is placed alongside the file w/ workspace configuration.
-[workspace]
+workspace:
+  # Array of paths mapping to package configuration files
+  members:
+    - ""
 
-# Array of paths mapping to package configuration files
-members = [""]
+  lints:
+    - lints
 
-lints = [
-	"lints"
-]
-
-# Development dependencies required to work on this project.
-# Standard dependency declarations
-[workspace.dev_dependencies]
-lints = { version = "0.1.0", github = "coconut-crew" }
+  # Development dependencies required to work on this project.
+  # Standard dependency declarations
+  dev_dependencies:
+    lints: { version: "0.1.0", github: coconut-crew }
 ```
 
 # Package
 
-```toml
-# "packages/server/package.aya.toml"
+```yaml
+# "packages/server/package.aya.yaml"
 #	Package-level configuration, completely independent of workspace-level config
-[package]
+package:
+  # Optional
+  name: server
 
-# Optional
-name = "server"
-
-# Semver is forced here
-version = "0.1.0"
+  # Semver is forced here
+  version: "0.1.0"
 
 # Standard dependency declaration
-[dependencies]
-log = { version = "0.1.0", github = "coconut-crew" }
+dependencies:
+  log: { version: "0.1.0", github: coconut-crew }
 
-[crates]
+crates:
+  root:
+    path: ""
+    visibility: private
+```
 
-[crates.root]
-path = ""
-visibility = "private"
+# Crate
+
+```yaml
+crate:
+  needs:
+    # No package specified == whatever package this is apart of
+    - shared
+
+    - richterm/styling
+
+  exports:
+    # Glob exports are supported
+    - "**"
+
+    # but also exact files
+    - src/main.luau
 ```
 
 ## Invariants

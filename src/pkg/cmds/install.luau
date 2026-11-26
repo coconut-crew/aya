@@ -1,8 +1,10 @@
+const app_dirs = require("@src/common/app_dirs")
 const exit = require("@src/common/exit")
 const git = require("@src/pkg/sources/providers/git")
 const manifest = require("@src/manifest")
 const path = require("@std/path")
 const process = require("@std/process")
+const project = require("@src/project")
 const providers = require("@src/pkg/sources/providers")
 const resolver = require("@src/pkg/resolver")
 
@@ -26,12 +28,10 @@ const function install(workspace: path.Pathlike): never
 	const solved = resolver.solve(resolver_ranges)
 
 	for key, value in solved do
-		providers.download_async(key, value, "tmptest")
+		providers.download_async(key, value, path.join(app_dirs.ensure("cache"), "packages"))
 	end
 
-	process.exit(0)
+	return process.exit(0)
 end
-
-install(process.cwd())
 
 return install
