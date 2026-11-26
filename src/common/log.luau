@@ -21,13 +21,15 @@ const function format_line(indicator: string, text: string): string
 	return `{grey(timestamp())} {indicator} {padded}`
 end
 
-const function capture_stack_trace(depth: number)
-	return string.gsub(debug.traceback(nil, depth), "[^\n]+", function(frame: string)
-		const source, fn_name = string.match(frame, "^(.-) function (.+)$")
-		const location = styles.stack_trace_text(source or frame)
+const function capture_stack_trace(depth: number): string
+	return (
+		string.gsub(debug.traceback(nil, depth), "[^\n]+", function(frame: string)
+			const source, fn_name = string.match(frame, "^(.-) function (.+)$")
+			const location = styles.stack_trace_text(source or frame)
 
-		return `{MESSAGE_INDENT}{grey("at")} {grey(fn_name or "<anonymous>")} {location}`
-	end)
+			return `{MESSAGE_INDENT}{grey("at")} {grey(fn_name or "<anonymous>")} {location}`
+		end)
+	)
 end
 
 const log = {}
