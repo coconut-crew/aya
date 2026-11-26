@@ -39,7 +39,7 @@ function integrations.apply_transformers(
 
 	const ctx: TransformerCtx = {
 		src_path = src,
-		plaintext = fs.readFileToString(src_content),
+		plaintext = src_content,
 		parsed = parse_result,
 		opts = {},
 	}

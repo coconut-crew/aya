@@ -6,7 +6,7 @@ const pkg_id = require("@src/pkg/utils/pkg_id")
 const semver = require("@src/pkg/utils/semver")
 const semver_range = require("@src/pkg/utils/semver_range")
 const source_info = require("@src/pkg/sources/source_info")
-const toml = require("@vendor/toml")
+const yaml_luau = require("@pkg/yaml_luau")
 
 export type DependencyEntry = {
 	global_name: pkg_id.GlobalName,
@@ -53,28 +53,35 @@ export type Identity = {
 	dependencies: { [pkg_id.GlobalName]: DependencyEntry },
 }
 
-const CONFIG_FILE_NAME = ".aya.toml"
+const CONFIG_FILE_NAME = ".aya.yaml"
+
+const function null_to_nil(value: any): any
+	return if value == yaml_luau.null then nil else value
+end
 
 const manifest = {
 	CONFIG_FILE_NAME = CONFIG_FILE_NAME,
 }
 
 function manifest.parse(str_content: string): Identity
-	log.trace(`\tparsing toml`)
+	log.trace(`\tparsing yaml`)
 
-	const raw_table_representation = toml.deserialize(str_content) :: RawTableRepresentation
+	const document = null_to_nil((yaml_luau.deserialize(str_content))) or {}
+	assert(type(document) == "table", "the manifest must be a mapping")
 
-	log.trace("got toml, converting into internal format")
+	const raw_table_representation: RawTableRepresentation = document
 
-	const raw_package = raw_table_representation.package
-	const raw_version = raw_package and raw_package.version
+	log.trace("got yaml, converting into internal format")
+
+	const raw_package = null_to_nil(raw_table_representation.package)
+	const raw_version = if raw_package then null_to_nil(raw_package.version) else nil
 
 	const manifest_contents: Identity = {
 		version = if raw_version then semver.parse(raw_version) else semver.parse("0.0.0"),
 		dependencies = {},
 	}
 
-	const raw_dependencies = raw_table_representation.dependencies
+	const raw_dependencies = null_to_nil(raw_table_representation.dependencies)
 	if raw_dependencies ~= nil then
 		assert(type(raw_dependencies) == "table", "the dependencies entry must be a table")
 

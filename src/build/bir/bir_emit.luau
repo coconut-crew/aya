@@ -77,7 +77,7 @@ function bir_emit.walk(input: { bir_types.BirStat }): string
 		implicit_outputs = {},
 
 		rule = "configure",
-		dependencies = { ".aya.toml" },
+		dependencies = { ".aya.yaml" },
 		variables = {
 			generator = "1",
 			restat = "1",

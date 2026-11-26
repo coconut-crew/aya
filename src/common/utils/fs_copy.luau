@@ -13,7 +13,7 @@ const function file_or_directory(from: path.Pathlike, to: path.Pathlike)
 	elseif filetype == `file` then
 		fs.copy(from, to)
 	else
-		error(`Unsupported file type: {filetype}`)
+		error(`unsupported file type: {filetype}`)
 	end
 end
 

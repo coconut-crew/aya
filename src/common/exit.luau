@@ -18,7 +18,7 @@ const reasons: { [ExitCode]: ExitReason } = {
 	["MANIFEST_PARSING_FAILED"] = {
 		code = 1,
 		explanation = {
-			`Manifest {styles.keyword("%*")} failed to parse: %*.`,
+			`manifest {styles.keyword("%*")} failed to parse: %*`,
 		},
 	},
 
@@ -33,7 +33,7 @@ const reasons: { [ExitCode]: ExitReason } = {
 	["WORKSPACE_NO_MANIFEST"] = {
 		code = 1,
 		explanation = {
-			"The workspace has no .aya.toml manifest",
+			"the workspace has no .aya.yaml manifest",
 		},
 	},
 

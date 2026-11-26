@@ -2,9 +2,9 @@ const bir_emit = require("@src/build/bir/bir_emit")
 const bir_types = require("@src/build/bir/bir_types")
 const test = require("@std/test")
 
-const function compile_stat(src: string, dst: string): bir_types.BirCompileLuauObject
+const function compile_stat(src: string, dst: string): bir_types.BirTransformLuauObject
 	return {
-		stat = "compile",
+		stat = "transform",
 		src = src,
 		dst = dst,
 		vars = {},
@@ -72,7 +72,7 @@ test.suite("bir_emit.walk", function(suite)
 	suite:case("emits a compile build from the source to the destination", function(t)
 		const output = bir_emit.walk({ compile_stat("src/main.luau", "out/main.luau") })
 
-		t.strContains(output, "build out/main.luau: compile src/main.luau\n")
+		t.strContains(output, "build out/main.luau: transform src/main.luau\n")
 	end)
 
 	suite:case("carries compile variables onto the build statement", function(t)
@@ -91,7 +91,7 @@ test.suite("bir_emit.walk", function(suite)
 			compile_stat("src/c.luau", "out/c.luau"),
 		})
 
-		t.strContains(output, ": compile ", 3)
+		t.strContains(output, ": transform ", 3)
 	end)
 
 	suite:case("escapes special characters in paths exactly once", function(t)

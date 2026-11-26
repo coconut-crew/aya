@@ -1,9 +1,9 @@
 --[[
 	File layout
 	
-	Root (with workspace, members, etc.): `aya.toml`
-	Packages: `<whatever>.ayapkg.toml`
-	Crates: `<whatever>.ayacrate.toml`
+	Root (with workspace, members, etc.): `aya.yaml`
+	Packages: `<whatever>.ayapkg.yaml`
+	Crates: `<whatever>.ayacrate.yaml`
 ]]
 
 const m_file_layout = {}
