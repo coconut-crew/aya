@@ -7,6 +7,7 @@ export type ExitCode =
 	| "ASSERTION_FAILED"
 	| "WORKSPACE_NO_MANIFEST"
 	| "ANCHOR_ENV_VARS_MISSING"
+	| "LOCKFILE_CHECKSUM_MISMATCH"
 export type ExitReason = {
 	code: number,
 	explanation: { string },
@@ -42,6 +43,16 @@ const reasons: { [ExitCode]: ExitReason } = {
 		explanation = {
 			`missing environment variables: %*`,
 			"likely an internal issue, @ffrostfall",
+		},
+	},
+
+	["LOCKFILE_CHECKSUM_MISMATCH"] = {
+		code = 1,
+		explanation = {
+			`the contents of {styles.keyword("%*")} changed since they were locked`,
+			"locked checksum:     %*",
+			"downloaded checksum: %*",
+			"if this is expected, delete the lockfile to accept the new contents",
 		},
 	},
 }

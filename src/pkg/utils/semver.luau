@@ -157,6 +157,13 @@ function semver.compare(left: Identity, right: Identity): number
 end
 
 --[[
+	Equality
+]]
+function semver.equals(left: Identity, right: Identity): boolean
+	return semver.compare(left, right) == 0
+end
+
+--[[
 	returns true if left is newer than right
 
 	it is like that for convenience sake in sort

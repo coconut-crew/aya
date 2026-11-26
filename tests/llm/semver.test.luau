@@ -117,7 +117,27 @@ test.suite("semver.order", function(suite)
 		t.that(semver.older(version(1, 0, 0), version(2, 0, 0)))
 		t.never.that(semver.older(version(1, 0, 0), version(1, 0, 0)))
 		t.never.that(semver.older(version(2, 0, 0), version(1, 0, 0)))
-	end)end)
+	end)
+end)
+
+test.suite("semver.equals", function(suite)
+	const function equals(left: string, right: string): boolean
+		return semver.equals(semver.parse(left), semver.parse(right))
+	end
+
+	suite:case("treats separately parsed copies of a version as equal", function(t)
+		t.that(equals("1.2.3", "1.2.3"))
+		t.that(equals("1.2.3-rc.1", "1.2.3-rc.1"))
+	end)
+
+	suite:case("tells apart versions that differ in any number or the prerelease", function(t)
+		t.never.that(equals("1.2.3", "1.2.4"))
+		t.never.that(equals("1.2.3", "1.3.3"))
+		t.never.that(equals("1.2.3", "2.2.3"))
+		t.never.that(equals("1.2.3-rc.1", "1.2.3"))
+		t.never.that(equals("1.2.3-rc.1", "1.2.3-rc.2"))
+	end)
+end)
 
 test.suite("semver.compatible", function(suite)
 	suite:case("accepts minor and patch differences once major is at least 1", function(t)

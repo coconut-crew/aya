@@ -20,6 +20,11 @@ function git_download.download(remote: string, revision: string, at: path.Pathli
 
 	const res = process.run({
 		"git",
+		"-c",
+		-- windows crlf, we checksum downloads, need lf
+		"core.autocrlf=false",
+		"-c",
+		"core.eol=lf",
 		"clone",
 		"--depth=1",
 		`--revision={revision}`,
@@ -31,6 +36,9 @@ function git_download.download(remote: string, revision: string, at: path.Pathli
 		res.ok,
 		`cloning {remote} at {revision} failed with exit code {res.exitcode}: {res.stderr}`
 	)
+
+	-- leaves only the package's files, and .git differs between clones of the same commit
+	fs.removeDirectory(path.join(at, ".git"), { recursive = true })
 
 	log.trace(`downloaded {remote} revision {revision} successfully`)
 end
