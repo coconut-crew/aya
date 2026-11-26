@@ -20,7 +20,10 @@ const function read_config(): { [string]: string }
 		return {}
 	end
 
-	return json.deserialize(fs.readFileToString(location)) :: any
+	const stored = json.deserialize(fs.readFileToString(location)) :: any
+	assert(type(stored) == "table", "config.json must contain an object")
+
+	return stored
 end
 
 const function set_setting(key: string, text: string?)

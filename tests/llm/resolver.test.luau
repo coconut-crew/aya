@@ -75,7 +75,12 @@ test.suite("resolver.solve", function(suite)
 			b = { ["2.1.0"] = {}, ["1.4.0"] = {} },
 		})
 
-		t.throws(resolver.solve, ranges({ a = "^1.0.0", b = "^1.0.0" }), nil)
+		t.throwsWith(
+			"version conflict for 'b': no available version satisfies:\n  ^1.0.0  (required by root)\n  ^2.0.0  (required by a@1.0.0)",
+			resolver.solve,
+			ranges({ a = "^1.0.0", b = "^1.0.0" }),
+			nil
+		)
 	end)
 
 	suite:case("rejects two 0.x minor versions of one package", function(t)
@@ -84,7 +89,12 @@ test.suite("resolver.solve", function(suite)
 			b = { ["0.4.1"] = {}, ["0.3.2"] = {} },
 		})
 
-		t.throws(resolver.solve, ranges({ a = "^1.0.0", b = "^0.3.0" }), nil)
+		t.throwsWith(
+			"version conflict for 'b': no available version satisfies:\n  ^0.3.0  (required by root)\n  ^0.4.0  (required by a@1.0.0)",
+			resolver.solve,
+			ranges({ a = "^1.0.0", b = "^0.3.0" }),
+			nil
+		)
 	end)
 
 	suite:case("narrows an open range by a caret range on the same package", function(t)
@@ -153,7 +163,7 @@ test.suite("resolver.solve", function(suite)
 	suite:case("rejects a requirement on a package with no registered source", function(t)
 		use_registry({})
 
-		t.throws(resolver.solve, ranges({ missing = "^1.0.0" }), nil)
+		t.throwsWith("package missing does not have a source", resolver.solve, ranges({ missing = "^1.0.0" }), nil)
 	end)
 
 	suite:case("rejects dependents that require different exact versions", function(t)
@@ -163,7 +173,12 @@ test.suite("resolver.solve", function(suite)
 			c = { ["1.1.0"] = {}, ["1.0.0"] = {} },
 		})
 
-		t.throws(resolver.solve, ranges({ a = "^1.0.0", b = "^1.0.0" }), nil)
+		t.throwsWith(
+			"version conflict for 'c': no available version satisfies:\n  =1.0.0  (required by a@1.0.0)\n  =1.1.0  (required by b@1.0.0)",
+			resolver.solve,
+			ranges({ a = "^1.0.0", b = "^1.0.0" }),
+			nil
+		)
 	end)
 
 	suite:case("resolves dependencies whose source is only known from their dependent", function(t)
@@ -179,6 +194,39 @@ test.suite("resolver.solve", function(suite)
 		t.eq(version_in(resolution, "c"), "1.2.0")
 	end)
 
+	suite:case("lists conflicting requirements in sorted order", function(t)
+		use_registry({
+			a = { ["1.0.0"] = { b = "^1.0.0" } },
+			b = { ["2.1.0"] = {}, ["1.4.0"] = {} },
+		})
+
+		t.throwsWith(
+			"version conflict for 'b': no available version satisfies:\n  ^1.0.0  (required by a@1.0.0)\n  ^2.0.0  (required by root)",
+			resolver.solve,
+			ranges({ a = "^1.0.0", b = "^2.0.0" }),
+			nil
+		)
+	end)
+
+	suite:case("reports the conflict of the root requirement that no version satisfies", function(t)
+		use_registry({
+			a = { ["1.0.0"] = { c = "=1.0.0" } },
+			c = { ["1.2.0"] = {}, ["1.0.0"] = {} },
+		})
+
+		t.throwsWith(
+			"version conflict for 'c': no available version satisfies:\n  =1.0.0  (required by a@1.0.0)\n  ^1.1.0  (required by root)",
+			resolver.solve,
+			ranges({ a = "^1.0.0", c = "^1.1.0" }),
+			nil
+		)
+	end)
+
+	suite:case("returns a frozen resolution", function(t)
+		use_registry({ a = { ["1.0.0"] = {} } })
+
+		t.that(table.isfrozen(resolver.solve(ranges({ a = "^1.0.0" }))))
+	end)
 	suite:case("applies every dependent's range to a dependency discovered earlier", function(t)
 		use_registry({
 			a = { ["1.0.0"] = { b = "^1.0.0" } },

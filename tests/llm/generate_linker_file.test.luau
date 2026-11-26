@@ -70,6 +70,73 @@ test.suite("generate_linker_file", function(suite)
 		t.eq(luau.loadModule(dst).value, 42)
 	end)
 
+	suite:case("links a source below the linker directory", function(t)
+		const dir = fresh_dir()
+		const src = path.join(dir, "links", "sub", "init.luau")
+		const dst = path.join(dir, "links", "lib.luau")
+		write_file(src, "return { value = 42 }")
+
+		generate_linker_file(src, dst)
+
+		t.eq(luau.loadModule(dst).value, 42)
+	end)
+
+	suite:case("links an init.luau entry point from its own directory", function(t)
+		const dir = fresh_dir()
+		const src = path.join(dir, "pkg", "init.luau")
+		const dst = path.join(dir, "pkg", "link.luau")
+		write_file(src, "return { value = 42 }")
+
+		generate_linker_file(src, dst)
+
+		t.eq(luau.loadModule(dst).value, 42)
+	end)
+
+	suite:case("links an init.luau entry point from a child directory", function(t)
+		const dir = fresh_dir()
+		const src = path.join(dir, "pkg", "init.luau")
+		const dst = path.join(dir, "pkg", "sub", "link.luau")
+		write_file(src, "return { value = 42 }")
+		fs.createDirectory(path.dirname(dst))
+
+		generate_linker_file(src, dst)
+
+		t.eq(luau.loadModule(dst).value, 42)
+	end)
+
+	suite:case("links a .lua entry point without its extension", function(t)
+		const dir = fresh_dir()
+		const src = path.join(dir, "crate", "mod.lua")
+		const dst = path.join(dir, "links", "mod.luau")
+		write_file(src, "return { value = 42 }")
+
+		generate_linker_file(src, dst)
+
+		t.eq(luau.loadModule(dst).value, 42)
+	end)
+
+	suite:case("links an init.lua entry point", function(t)
+		const dir = fresh_dir()
+		const src = path.join(dir, "crate", "lib", "init.lua")
+		const dst = path.join(dir, "links", "lib.luau")
+		write_file(src, "return { value = 42 }")
+
+		generate_linker_file(src, dst)
+
+		t.eq(luau.loadModule(dst).value, 42)
+	end)
+
+	suite:case("links an entry point whose name starts with a dot", function(t)
+		const dir = fresh_dir()
+		const src = path.join(dir, "links", ".hidden.luau")
+		const dst = path.join(dir, "links", "lib.luau")
+		write_file(src, "return { value = 42 }")
+
+		generate_linker_file(src, dst)
+
+		t.eq(luau.loadModule(dst).value, 42)
+	end)
+
 	suite:case("re-exports every exported type alias", function(t)
 		const output = linker_text("export type A = number\nexport type B = string\nreturn {}")
 
@@ -94,6 +161,12 @@ test.suite("generate_linker_file", function(suite)
 			linker_text("export type Fn<T, A... = ...number> = (T, A...) -> ()\nreturn {}")
 
 		t.strContains(output, "export type Fn<T, A... = ...number> = REQUIRED_MODULE.Fn<T, A...>\n")
+	end)
+
+	suite:case("keeps generic defaults that are not plain names", function(t)
+		const output = linker_text("export type Gen<T = { string }, U... = (number, string)> = T\nreturn {}")
+
+		t.strContains(output, "export type Gen<T = { string }, U... = (number, string)> = ")
 	end)
 
 	suite:case("re-exports type functions with their parameters", function(t)

@@ -143,6 +143,9 @@ const function read_manifest_async(
 	remote: string,
 	revision: string
 ): string
+	-- the revision came from the remote or the disk cache and is used as a cache file name
+	assert(is_commit_hash(revision), `{remote} gave an invalid revision "{revision}"`)
+
 	const cached = manifest_cache:get(revision)
 	if cached then
 		return cached

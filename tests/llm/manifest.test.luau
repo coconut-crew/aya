@@ -51,10 +51,51 @@ dependencies:
 		t.eq(parsed.dependencies, {})
 	end)
 
-	suite:case("rejects a dependency entry that is not a table", function(t)
-		t.throws(manifest.parse, "dependencies: log")
+	suite:case("rejects a manifest that is not a mapping", function(t)
+		t.throwsWith("the manifest must be a mapping", manifest.parse, "just text")
 	end)
 
+	suite:case("rejects a manifest that is a sequence", function(t)
+		t.throwsWith("the manifest must be a mapping", manifest.parse, "- a\n- b\n")
+	end)
+
+	suite:case("rejects a dependencies entry that is not a table", function(t)
+		t.throwsWith("the dependencies entry must be a table", manifest.parse, "dependencies: log")
+	end)
+
+	suite:case("rejects a dependency entry that is not a table", function(t)
+		t.throwsWith(
+			"log: the dependency must be a table",
+			manifest.parse,
+			"dependencies:\n  log: hello\n"
+		)
+	end)
+
+	suite:case("rejects a dependency name that is not a string", function(t)
+		t.throwsWith(
+			"dependency names must be strings",
+			manifest.parse,
+			"dependencies:\n  1: { version: \"1.0.0\", github: owner }\n"
+		)
+	end)
+
+	suite:case("rejects a version, rev or github owner that is not a string", function(t)
+		t.throwsWith(
+			"log: version must be a string",
+			manifest.parse,
+			"dependencies:\n  log: { version: 1.0, github: owner }\n"
+		)
+		t.throwsWith(
+			"log: rev must be a string",
+			manifest.parse,
+			"dependencies:\n  log: { version: \"1.0.0\", github: owner, rev: 5 }\n"
+		)
+		t.throwsWith(
+			"log: github must be a single owner name",
+			manifest.parse,
+			"dependencies:\n  log: { version: \"1.0.0\", github: 5 }\n"
+		)
+	end)
 	suite:case("stores dependencies under their global name", function(t)
 		const parsed = manifest.parse([[
 dependencies:
@@ -63,10 +104,12 @@ dependencies:
 
 		t.eq(parsed.dependencies.Log, nil)
 		t.eq(parsed.dependencies.log.global_name, "log")
+		t.eq(parsed.dependencies.log.source.remote, "https://github.com/coconut-crew/log.git")
 	end)
 
 	suite:case("rejects a dependency without a source", function(t)
-		t.throws(
+		t.throwsWith(
+			"non-github dependencies are unsupported at this time",
 			manifest.parse,
 			[[
 dependencies:
@@ -75,8 +118,27 @@ dependencies:
 		)
 	end)
 
+	suite:case("rejects dependency names and owners that would escape their path segment", function(t)
+		t.throwsWith(
+			`invalid dependency name "../evil", only letters, digits, "_", "-" and "." are allowed`,
+			manifest.parse,
+			"dependencies:\n  \"../evil\": { version: \"0.1.0\", github: owner }\n"
+		)
+		t.throwsWith(
+			`invalid dependency name "a/b", only letters, digits, "_", "-" and "." are allowed`,
+			manifest.parse,
+			"dependencies:\n  \"a/b\": { version: \"0.1.0\", github: owner }\n"
+		)
+		t.throwsWith(
+			"log: github must be a single owner name",
+			manifest.parse,
+			"dependencies:\n  log: { version: \"0.1.0\", github: \"../owner\" }\n"
+		)
+	end)
+
 	suite:case("rejects an invalid version", function(t)
-		t.throws(
+		t.throwsWith(
+			`invalid semver "0.1"`,
 			manifest.parse,
 			[[
 dependencies:
@@ -110,7 +172,8 @@ dependencies:
 	end)
 
 	suite:case("rejects a dependency with neither a version nor a rev", function(t)
-		t.throws(
+		t.throwsWith(
+			"log: no version or revision",
 			manifest.parse,
 			[[
 dependencies:
@@ -130,5 +193,25 @@ package:
 
 	suite:case("defaults the package version to 0.0.0", function(t)
 		t.eq(manifest.parse("").version, semver.parse("0.0.0"))
+	end)
+
+	suite:case("rejects a package version that is not a string", function(t)
+		for _, version in { "1.0", "2", "true" } do
+			const ok, message = pcall(manifest.parse, `package:\n  name: x\n  version: {version}\n`)
+
+			t.eq(ok, false)
+			t.eq(string.find(tostring(message), "package.version must be a string", 1, true) ~= nil, true)
+		end
+	end)
+
+	suite:case("rejects dependency names that differ only by case", function(t)
+		const ok, message = pcall(manifest.parse, [[
+dependencies:
+  Log: { version: "1.0.0", github: owner }
+  log: { version: "2.0.0", github: owner }
+]])
+
+		t.eq(ok, false)
+		t.eq(string.find(tostring(message), "duplicate dependency log", 1, true) ~= nil, true)
 	end)
 end)

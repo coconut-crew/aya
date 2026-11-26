@@ -50,4 +50,5 @@ jobs:
       - name: upload
         env:
           GITHUB_TOKEN: ${{ secrets.AYA_RELEASE_PAT }}
-        run: gh release upload "${{ github.event.release.tag_name }}" "release/$ARCHIVE" --clobber
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG_NAME" "release/$ARCHIVE" --clobber

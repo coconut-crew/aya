@@ -13,7 +13,7 @@ const SUCCESS_INDICATOR = styles.success_indicator(" ✓ DONE  ")
 const MESSAGE_INDENT = string.rep(" ", 21)
 
 const function timestamp(): string
-	return os.date("%H:%M:%S.") .. string.format("%.03d", math.round((os.clock() % 1) * 1000))
+	return os.date("%H:%M:%S.") .. string.format("%.03d", math.floor((os.clock() % 1) * 1000))
 end
 
 const function format_line(indicator: string, text: string): string

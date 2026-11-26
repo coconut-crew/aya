@@ -41,7 +41,19 @@ test.suite("interval_set.new", function(suite)
 		t.throws(interval_set.new, less, MIN, 3, 3)
 		t.throws(interval_set.new, less, MIN, 5, 3)
 	end)
-end)
+
+	suite:case("rejects an upper bound without a lower bound", function(t)
+		t.throws(interval_set.new, less, MIN, nil, 3)
+	end)
+
+	suite:case("builds sets with both bounds through constructor_with", function(t)
+		const make = interval_set.constructor_with(less, MIN)
+
+		t.eq(boundaries(make(1, 3)), { 1, 3 })
+		t.eq(boundaries(make(2)), { 2 })
+		t.eq(make(1, 3).cmp, less)
+		t.eq(make(1, 3).min, MIN)
+	end)end)
 
 test.suite("interval_set.complement", function(suite)
 	suite:case("complements back to the original set", function(t)
@@ -59,7 +71,12 @@ test.suite("interval_set.complement", function(suite)
 		t.eq(result.cmp, less)
 		t.eq(result.min, MIN)
 	end)
-end)
+
+	suite:case("prepends the set's own min when the set does not start there", function(t)
+		const target = interval_set.new(less, 0, 2, 3)
+
+		t.eq(boundaries(interval_set.complement(target)), { 0, 2, 3 })
+	end)end)
 
 test.suite("interval_set.intersect", function(suite)
 	suite:case("keeps only the overlap of two intervals", function(t)

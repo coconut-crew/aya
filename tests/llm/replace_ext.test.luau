@@ -34,4 +34,7 @@ test.suite("replace_ext", function(suite)
 	suite:case("works on a bare file name", function(t)
 		t.eq(replaced("main.luau", "dd"), expected("main.dd"))
 	end)
-end)
+
+	suite:case("returns a path without a last component unchanged", function(t)
+		t.eq(replaced("/", "dd"), expected("/"))
+	end)end)

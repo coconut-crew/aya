@@ -20,6 +20,7 @@ const function edit_config(args: Args)
 	assert(key, "usage: aya unset | value | list")
 
 	if args.unset then
+		assert(args.value == nil, "--unset does not take a value")
 		config.unset(key)
 	elseif args.value then
 		config.set(key, args.value)

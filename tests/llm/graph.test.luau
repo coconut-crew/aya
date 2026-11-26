@@ -121,6 +121,18 @@ test.suite("graph:delete_node", function(suite)
 		t.eq(target:get(aa), nil)
 	end)
 
+	suite:case("leaves a target node safe to delete after its source is deleted", function(t)
+		const target: Graph = graph.new<<string, string>>()
+		const a = target:node("a")
+		const b = target:node("b")
+		const ab = target:edge(a, b, "a->b")
+
+		target:delete_node(a)
+		target:delete_node(b)
+
+		t.eq(target:get(ab), nil)
+		t.eq(target:get(b), nil)
+	end)
 	-- deleting b moves d into b's slot in a's record, so deleting d next
 	-- only works if that move was tracked
 	suite:case("keeps remaining edges intact when neighbours are deleted out of order", function(t)
@@ -234,4 +246,27 @@ test.suite("graph:edges", function(suite)
 		t.eq(visited, 3)
 		t.eq(collect_edges(target, a), {})
 	end)
-end)
+
+	suite:case("yields every edge that existed at the start even if the loop deletes other targets", function(t)
+		const target: Graph = graph.new<<string, string>>()
+		const a = target:node("a")
+		const b = target:node("b")
+		const c = target:node("c")
+		const d = target:node("d")
+		target:edge(a, b, "a->b")
+		target:edge(a, c, "a->c")
+		target:edge(a, d, "a->d")
+
+		const yielded: { Node } = {}
+		for tgt in target:edges(a) do
+			table.insert(yielded, tgt)
+			if #yielded == 1 then
+				for _, doomed in { b, c, d } do
+					target:delete_node(doomed)
+				end
+			end
+		end
+
+		table.sort(yielded)
+		t.eq(yielded, { b, c, d })
+	end)end)

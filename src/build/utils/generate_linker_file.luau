@@ -2,7 +2,13 @@ const fs = require("@std/fs")
 const path = require("@std/path")
 const query = require("@std/syntax/query")
 const syntax = require("@std/syntax")
+const printer = require("@std/syntax/printer")
 const types = require("@std/syntax/types")
+
+-- prints a node without the whitespace around it
+const function print_trimmed(node: types.CstNode): string
+	return string.match(printer.printNode(node), "^%s*(.-)%s*$") :: string
+end
 
 const function render_generic_array(
 	file_contents: { string },
@@ -44,7 +50,7 @@ const function render_type_alias(file_contents: { string }, node: types.CstStatT
 		table.insert(generics, generic_node.name.text)
 
 		if generic_node.default then
-			table.insert(generics, " = " .. generic_node.default.name.text)
+			table.insert(generics, " = " .. print_trimmed(generic_node.default))
 		else
 			table.insert(generics, false :: false)
 		end
@@ -55,7 +61,7 @@ const function render_type_alias(file_contents: { string }, node: types.CstStatT
 		table.insert(generics, generic_node.name.text .. "...")
 
 		if generic_node.default then
-			table.insert(generics, " = ..." .. generic_node.default.type.name.text)
+			table.insert(generics, " = " .. print_trimmed(generic_node.default))
 		else
 			table.insert(generics, false :: false)
 		end
@@ -106,10 +112,13 @@ const function generate_linker_file(src: path.Path, dst: path.Path)
 		end
 	)
 
-	const source_path = path.dirname(path.normalize(dst))
-	local entry_point = path.normalize(src)
+	const source_path = path.dirname(path.resolve(dst))
+	local entry_point = path.resolve(src)
 
-	if path.basename(entry_point) == "init.luau" then
+	const entry_name = path.basename(entry_point)
+	const is_init = entry_name == "init.luau" or entry_name == "init.lua"
+
+	if is_init then
 		entry_point = path.dirname(entry_point)
 	end
 
@@ -117,8 +126,19 @@ const function generate_linker_file(src: path.Path, dst: path.Path)
 
 	-- bruh
 	-- TODO: fix this mess
-	if string.sub(relative, -#".luau") == ".luau" then
-		relative = string.sub(relative, 1, -#".luau" - 1)
+	-- require paths never include the extension
+	for _, extension in { ".luau", ".lua" } do
+		if not is_init and string.sub(relative, -#extension) == extension then
+			relative = string.sub(relative, 1, -#extension - 1)
+			break
+		end
+	end
+
+	-- luau only treats paths starting with ./ or ../ as relative, and a bare . or .. is not a path
+	if relative == "." or relative == ".." then
+		relative = `{relative}/`
+	elseif string.sub(relative, 1, 2) ~= "./" and string.sub(relative, 1, 3) ~= "../" then
+		relative = "./" .. relative
 	end
 
 	const file_contents: { string } = {

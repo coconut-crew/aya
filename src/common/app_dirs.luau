@@ -14,7 +14,8 @@ end
 
 const function env_var_default(var_name: string, fallback: path.Path): path.Path
 	const env_var = process.env[var_name]
-	if env_var == "" or env_var == nil then
+	-- the xdg spec says relative paths are invalid and must be ignored
+	if env_var == nil or not path.isAbsolute(env_var) then
 		return fallback
 	end
 

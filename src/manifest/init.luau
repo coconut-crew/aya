@@ -67,7 +67,8 @@ function manifest.parse(str_content: string): Identity
 	log.trace(`\tparsing yaml`)
 
 	const document = null_to_nil((yaml_luau.deserialize(str_content))) or {}
-	assert(type(document) == "table", "the manifest must be a mapping")
+	-- yaml sequences are tables too, but always have array entries
+	assert(type(document) == "table" and #document == 0, "the manifest must be a mapping")
 
 	const raw_table_representation: RawTableRepresentation = document
 
@@ -75,6 +76,7 @@ function manifest.parse(str_content: string): Identity
 
 	const raw_package = null_to_nil(raw_table_representation.package)
 	const raw_version = if raw_package then null_to_nil(raw_package.version) else nil
+	assert(raw_version == nil or type(raw_version) == "string", "package.version must be a string")
 
 	const manifest_contents: Identity = {
 		version = if raw_version then semver.parse(raw_version) else semver.parse("0.0.0"),
@@ -87,8 +89,12 @@ function manifest.parse(str_content: string): Identity
 
 		for dependency, data in raw_dependencies do
 			const parsed = m_dependency_parser.parse_dep(dependency, data)
+			assert(
+				manifest_contents.dependencies[parsed.global_name] == nil,
+				`duplicate dependency {parsed.global_name}, names are case insensitive`
+			)
 
-			manifest_contents.dependencies[pkg_id.global_name(dependency)] = parsed
+			manifest_contents.dependencies[parsed.global_name] = parsed
 
 			log.trace(
 				`\tparsed dep [{dependency}]: v{semver_range.print(parsed.version)}, src type: {parsed.source.type}`
@@ -113,25 +119,21 @@ function manifest.read_from(location: path.Pathlike): Identity
 end
 
 function manifest.find_closest_config(location: path.Pathlike): path.Pathlike?
-	location = path.parse(location)
+	-- relative locations have to be made absolute, or the walk stops at the working directory
+	local cursor = path.resolve(location)
 
-	const first = path.join(location, CONFIG_FILE_NAME)
-	if fs.exists(first) then
-		return first
-	end
-
-	local cursor = location
-	for i = #location.parts, 1, -1 do
-		cursor = path.normalize(path.join(cursor, ".."))
-
+	while true do
 		const potential_config_path = path.join(cursor, CONFIG_FILE_NAME)
-
 		if fs.exists(potential_config_path) then
 			return potential_config_path
 		end
-	end
 
-	return nil
+		if #cursor.parts == 0 then
+			return nil
+		end
+
+		cursor = path.resolve(cursor, "..")
+	end
 end
 
 return table.freeze(manifest)

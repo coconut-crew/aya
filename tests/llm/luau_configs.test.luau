@@ -41,6 +41,16 @@ test.suite("luau_configs.serialize", function(suite)
 		})
 	end)
 
+	suite:case("writes aliases in sorted order so output is reproducible", function(t)
+		const output = luau_configs.serialize(config_with({ zeta = "z", alpha = "a", mid = "m" }))
+
+		const alpha = string.find(output, "alpha", 1, true)
+		const mid = string.find(output, "mid", 1, true)
+		const zeta = string.find(output, "zeta", 1, true)
+		assert(alpha and mid and zeta, "every alias is written")
+
+		t.that(alpha < mid and mid < zeta, "aliases are not sorted")
+	end)
 	suite:case("writes an empty alias table when there are no aliases", function(t)
 		t.eq(evaluate(config_with({})).luau.aliases, {})
 	end)

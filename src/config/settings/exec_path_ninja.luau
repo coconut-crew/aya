@@ -1,4 +1,3 @@
-const path = require("@std/path")
 const setting = require("@src/config/setting")
 
 const exec_path_ninja: setting.Identity<string> = {
@@ -6,8 +5,7 @@ const exec_path_ninja: setting.Identity<string> = {
 	default = "ninja",
 
 	parse = function(text: string): string
-		if not path.parse(text) then
-		end
+		assert(text ~= "", "the ninja executable path cannot be empty")
 		return text
 	end,
 }
