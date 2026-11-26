@@ -6,7 +6,7 @@ equivalent of build.rs
 
 ## Workspace
 
-- the thing u actually work in / edit code in, this is where build directory lives, cache lives, etc. its the git repo
+- the thing u actually work in / edit code in, this is where build directory lives, cache lives, etc. it's the git repo
 
 ## Package
 

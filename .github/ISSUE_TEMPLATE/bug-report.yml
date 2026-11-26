@@ -1,5 +1,5 @@
 name: bug report
-description: report something which isnt behaving the way you expected
+description: report something which isn't behaving the way you expected
 type: bug
 labels: "triage"
 assignees: ["nnullcolumn", "ffrostfall"]
@@ -43,13 +43,13 @@ body:
       description: a clear set of steps to cause the bug to happen. (links, code fences, etc. are appreciated - avoid images.) if your repro is long, it will take more time to triage or fix. please make sure the set of steps is as simple as possible and that someone without other information about your project can cause it to happen locally.
       placeholder: |
         steps:
-        1. use this ayapkg.toml: file...
+        1. use this .aya.yaml: file...
         2. aya pkg install
     validations:
       required: true
   - type: textarea
     attributes:
-      label: currvent vs. expected behavior
+      label: current vs. expected behavior
       description: |
         current behavior vs. what you expected the behavior to be.
 

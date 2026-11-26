@@ -36,6 +36,7 @@ jobs:
             .lute/
             src/
             tests/
+            vendor/
             .config.luau
             rokit.toml
           sparse-checkout-cone-mode: false
@@ -45,7 +46,7 @@ jobs:
       - name: setup lute
         run: lute setup
       - name: analyze tools
-        run: lute check ./aya
+        run: lute check ./src
       - name: analyze tests
         run: lute check ./tests
       - name: analyze lute scripts
