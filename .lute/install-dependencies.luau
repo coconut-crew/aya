@@ -22,7 +22,10 @@ for dep_name, dep_data: any in toml.deserialize(fs.readFileToString("dependencie
 	assert(type(dep_data.entry_point) == "string", `{dep_name}.entry_point must be a string`)
 	assert(string.find(dep_name, "^[%w_%-]+$"), `invalid dependency name {dep_name}`)
 	assert(string.find(dep_data.commit, "^%x+$"), `{dep_name}.commit must be a hex hash`)
-	assert(string.sub(dep_data.remote, 1, 8) == "https://", `{dep_name}.remote must be an https url`)
+	assert(
+		string.sub(dep_data.remote, 1, 8) == "https://",
+		`{dep_name}.remote must be an https url`
+	)
 
 	--TODO: dont nuke it, fetch instead.
 	if fs.exists(`pkgs/index/{dep_name}`) then
