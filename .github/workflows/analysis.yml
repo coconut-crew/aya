@@ -8,19 +8,19 @@ defaults:
     shell: bash
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/analysis.yml
-      - .lute/**
-      - src/**
-      - tests/**
-      - .config.luau
-      - rokit.toml
-  pull_request:
-  workflow_dispatch:
-  merge_group:
+  # push:
+  #   branches:
+  #     # - main
+  #   paths:
+  #     - .github/workflows/analysis.yml
+  #     - .lute/**
+  #     - src/**
+  #     - tests/**
+  #     - .config.luau
+  #     - rokit.toml
+  # pull_request:
+  # workflow_dispatch:
+  # merge_group:
 
 jobs:
   test:
