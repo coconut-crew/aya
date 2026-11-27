@@ -57,7 +57,7 @@ jobs:
         run: lute install-dependencies
 
       - name: test script
-        run: lute test
+        run: lute test -v
 
       # - name: upload artifact
       #   if: ${{ always() && github.repository == 'coconut-crew/aya' }}
