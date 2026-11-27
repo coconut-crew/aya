@@ -45,6 +45,8 @@ jobs:
         uses: CompeyDev/setup-rokit@1d9390883f7ebce19d48f5b8d006e11d387c92ab
       - name: setup lute
         run: lute setup
+      - name: install dependencies
+        run: lute install-dependencies
       - name: analyze tools
         run: lute check ./src
       - name: analyze tests
