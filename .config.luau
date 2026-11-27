@@ -4,7 +4,7 @@ const luau_config = {
 	aliases = {
 		std = "~/.lute/typedefs/1.0.1/std",
 		lute = "~/.lute/typedefs/1.0.1/lute",
-		vendor = "vendor",
+		vendor = "./vendor",
 
 		src = "./src",
 		pkg = "./pkgs/links",

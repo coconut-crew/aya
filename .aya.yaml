@@ -1,2 +1,2 @@
 dependencies:
-  aya_dependency: { version: "0.1.0", github: coconut-crew }
+    aya_dependency: { version: 0.2.0, github: coconut-crew }
