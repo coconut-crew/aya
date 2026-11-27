@@ -47,6 +47,7 @@ jobs:
             vendor/
             .config.luau
             rokit.toml
+            dependencies.toml
           sparse-checkout-cone-mode: false
 
       - name: setup-rokit
