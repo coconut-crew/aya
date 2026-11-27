@@ -146,7 +146,8 @@ test.suite("bir_emit.walk", function(suite)
 		end
 	end)
 	suite:case("emits a compile_bin build from the source to the destination", function(t)
-		const output = bir_emit.walk({ { stat = "compile_bin", src = "src/main.luau", dst = "out/main" } })
+		const output =
+			bir_emit.walk({ { stat = "compile_bin", src = "src/main.luau", dst = "out/main" } })
 
 		t.strContains(output, "build out/main: compile_bin src/main.luau\n")
 	end)
@@ -154,7 +155,10 @@ test.suite("bir_emit.walk", function(suite)
 	suite:case("emits a linkers build from the link source to the link location", function(t)
 		const output = bir_emit.walk({ link_stat("crates/foo", 1) })
 
-		t.strContains(output, "build crates/foo/links/link_1.luau: linkers crates/foo/src/link_1.luau\n")
+		t.strContains(
+			output,
+			"build crates/foo/links/link_1.luau: linkers crates/foo/src/link_1.luau\n"
+		)
 	end)
 
 	suite:case("regenerates build.ninja from the manifest with restat", function(t)
@@ -172,5 +176,4 @@ test.suite("bir_emit.walk", function(suite)
 
 		t.strNotContains(configure_line, " | ")
 	end)
-
 end)

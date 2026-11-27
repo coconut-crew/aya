@@ -165,15 +165,11 @@ elseif subcommand == "publish" then
 		"option",
 		{ aliases = { "prod" }, help = "uses the production configuration" }
 	)
-	parser:add(
-		"target",
-		"option",
-		{
-			default = "dev-default",
-			aliases = { "t" },
-			help = "the target to configure. by default dev-default",
-		}
-	)
+	parser:add("target", "option", {
+		default = "dev-default",
+		aliases = { "t" },
+		help = "the target to configure. by default dev-default",
+	})
 	parser:add(
 		"key",
 		"positional",

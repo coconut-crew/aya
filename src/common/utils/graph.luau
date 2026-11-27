@@ -178,10 +178,10 @@ type _edge = "__EDGE"
 type function Get(ty)
 	const node_ty = _rawget(ty, _node)
 	if node_ty ~= _nil then
-        return node_ty
+		return node_ty
 	end
 
-    const edge_ty = _rawget(ty, _edge)
+	const edge_ty = _rawget(ty, _edge)
 	if edge_ty == _nil then
 		print("Cannot get a non-ID")
 		return types.never

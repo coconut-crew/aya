@@ -71,7 +71,11 @@ test.suite("providers", function(suite)
 	suite:case("rejects a package that has no source", function(t)
 		providers.add_provider("fake", fake.provider)
 
-		t.throwsWith("package missing does not have a source", providers.get_versions_async, "missing")
+		t.throwsWith(
+			"package missing does not have a source",
+			providers.get_versions_async,
+			"missing"
+		)
 	end)
 
 	suite:case("rejects a package whose source type has no provider", function(t)

@@ -37,4 +37,5 @@ test.suite("replace_ext", function(suite)
 
 	suite:case("returns a path without a last component unchanged", function(t)
 		t.eq(replaced("/", "dd"), expected("/"))
-	end)end)
+	end)
+end)

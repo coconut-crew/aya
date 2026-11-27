@@ -164,7 +164,8 @@ test.suite("generate_linker_file", function(suite)
 	end)
 
 	suite:case("keeps generic defaults that are not plain names", function(t)
-		const output = linker_text("export type Gen<T = { string }, U... = (number, string)> = T\nreturn {}")
+		const output =
+			linker_text("export type Gen<T = { string }, U... = (number, string)> = T\nreturn {}")
 
 		t.strContains(output, "export type Gen<T = { string }, U... = (number, string)> = ")
 	end)

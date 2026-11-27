@@ -94,7 +94,10 @@ const function use_registry(registry: Registry)
 end
 
 const function satisfies(version: string, range: string): boolean
-	return version_set.contains(version_set.from_range(semver_range.parse(range)), semver.parse(version))
+	return version_set.contains(
+		version_set.from_range(semver_range.parse(range)),
+		semver.parse(version)
+	)
 end
 
 -- why the assignment is not a valid, minimal resolution, or nil when it is one

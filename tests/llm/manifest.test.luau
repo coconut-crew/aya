@@ -75,7 +75,7 @@ dependencies:
 		t.throwsWith(
 			"dependency names must be strings",
 			manifest.parse,
-			"dependencies:\n  1: { version: \"1.0.0\", github: owner }\n"
+			'dependencies:\n  1: { version: "1.0.0", github: owner }\n'
 		)
 	end)
 
@@ -88,12 +88,12 @@ dependencies:
 		t.throwsWith(
 			"log: rev must be a string",
 			manifest.parse,
-			"dependencies:\n  log: { version: \"1.0.0\", github: owner, rev: 5 }\n"
+			'dependencies:\n  log: { version: "1.0.0", github: owner, rev: 5 }\n'
 		)
 		t.throwsWith(
 			"log: github must be a single owner name",
 			manifest.parse,
-			"dependencies:\n  log: { version: \"1.0.0\", github: 5 }\n"
+			'dependencies:\n  log: { version: "1.0.0", github: 5 }\n'
 		)
 	end)
 	suite:case("stores dependencies under their global name", function(t)
@@ -118,23 +118,26 @@ dependencies:
 		)
 	end)
 
-	suite:case("rejects dependency names and owners that would escape their path segment", function(t)
-		t.throwsWith(
-			`invalid dependency name "../evil", only letters, digits, "_", "-" and "." are allowed`,
-			manifest.parse,
-			"dependencies:\n  \"../evil\": { version: \"0.1.0\", github: owner }\n"
-		)
-		t.throwsWith(
-			`invalid dependency name "a/b", only letters, digits, "_", "-" and "." are allowed`,
-			manifest.parse,
-			"dependencies:\n  \"a/b\": { version: \"0.1.0\", github: owner }\n"
-		)
-		t.throwsWith(
-			"log: github must be a single owner name",
-			manifest.parse,
-			"dependencies:\n  log: { version: \"0.1.0\", github: \"../owner\" }\n"
-		)
-	end)
+	suite:case(
+		"rejects dependency names and owners that would escape their path segment",
+		function(t)
+			t.throwsWith(
+				`invalid dependency name "../evil", only letters, digits, "_", "-" and "." are allowed`,
+				manifest.parse,
+				'dependencies:\n  "../evil": { version: "0.1.0", github: owner }\n'
+			)
+			t.throwsWith(
+				`invalid dependency name "a/b", only letters, digits, "_", "-" and "." are allowed`,
+				manifest.parse,
+				'dependencies:\n  "a/b": { version: "0.1.0", github: owner }\n'
+			)
+			t.throwsWith(
+				"log: github must be a single owner name",
+				manifest.parse,
+				'dependencies:\n  log: { version: "0.1.0", github: "../owner" }\n'
+			)
+		end
+	)
 
 	suite:case("rejects an invalid version", function(t)
 		t.throwsWith(
@@ -200,16 +203,22 @@ package:
 			const ok, message = pcall(manifest.parse, `package:\n  name: x\n  version: {version}\n`)
 
 			t.eq(ok, false)
-			t.eq(string.find(tostring(message), "package.version must be a string", 1, true) ~= nil, true)
+			t.eq(
+				string.find(tostring(message), "package.version must be a string", 1, true) ~= nil,
+				true
+			)
 		end
 	end)
 
 	suite:case("rejects dependency names that differ only by case", function(t)
-		const ok, message = pcall(manifest.parse, [[
+		const ok, message = pcall(
+			manifest.parse,
+			[[
 dependencies:
   Log: { version: "1.0.0", github: owner }
   log: { version: "2.0.0", github: owner }
-]])
+]]
+		)
 
 		t.eq(ok, false)
 		t.eq(string.find(tostring(message), "duplicate dependency log", 1, true) ~= nil, true)

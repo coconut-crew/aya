@@ -44,4 +44,5 @@ test.suite("semver_range.print", function(suite)
 
 	suite:case("prints the any range as a star", function(t)
 		t.eq(semver_range.print(semver_range.any), "*")
-	end)end)
+	end)
+end)

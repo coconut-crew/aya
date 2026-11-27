@@ -50,7 +50,10 @@ function m_dependency_parser.parse_dep(raw_name: string, raw: RawDepEntry): Depe
 		type(raw.github) == "string" and string.find(raw.github, SEGMENT_PATTERN),
 		`{global_name}: github must be a single owner name`
 	)
-	assert(raw.version == nil or type(raw.version) == "string", `{global_name}: version must be a string`)
+	assert(
+		raw.version == nil or type(raw.version) == "string",
+		`{global_name}: version must be a string`
+	)
 	assert(raw.rev == nil or type(raw.rev) == "string", `{global_name}: rev must be a string`)
 	assert(raw.version or raw.rev, `{global_name}: no version or revision`)
 

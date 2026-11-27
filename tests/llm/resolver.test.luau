@@ -163,7 +163,12 @@ test.suite("resolver.solve", function(suite)
 	suite:case("rejects a requirement on a package with no registered source", function(t)
 		use_registry({})
 
-		t.throwsWith("package missing does not have a source", resolver.solve, ranges({ missing = "^1.0.0" }), nil)
+		t.throwsWith(
+			"package missing does not have a source",
+			resolver.solve,
+			ranges({ missing = "^1.0.0" }),
+			nil
+		)
 	end)
 
 	suite:case("rejects dependents that require different exact versions", function(t)
